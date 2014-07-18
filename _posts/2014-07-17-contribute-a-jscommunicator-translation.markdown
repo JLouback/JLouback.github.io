@@ -120,4 +120,4 @@ Make sure that the base repo (the first on the line above the green Create pull 
 
 ![pullEdit](/assets/pullEdit.jpg)
 
-If first repo is opentelecoms-org:i18n-support and the second is YOUR_USER:i18n-support and you've verified (scroll down) that there are 2 files changed which are your new .properties file and the added element to the available_languages.ruby, go ahead and press create pull request. It'll open a window with a text box you can add an explanation to with one final 'Create pull request' button. Click that and you're done! You've kindly contributed with a translation for JSCommunicator! 
+If first repo is opentelecoms-org:i18n-support and the second is YOUR_USER:i18n-support and you've verified (scroll down) that there are 2 files changed which are your new .properties file and the added element to the available_languages.xml, go ahead and press create pull request. It'll open a window with a text box you can add an explanation to with one final 'Create pull request' button. Click that and you're done! You've kindly contributed with a translation for JSCommunicator! 
