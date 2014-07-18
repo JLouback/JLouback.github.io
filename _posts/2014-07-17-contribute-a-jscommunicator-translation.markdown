@@ -23,7 +23,8 @@ Now fork the JSCommunicator repo. I really like the word 'fork'. Great term. If 
 2. Browse to https://github.com/JLouback/jscommunicator
 
 3. Somewhere around the upper left corner, you will see a button labeled 'Fork'. Click that. 
-![fork]({{ site.url }}/assets/fork.jpg)
+
+![fork](/assets/fork.jpg)
 
 You should now have your own JSCommunicator repository on your Github account. On your main page select the tab 'Repositories'. It should be the first on the list. The url will be https://github.com/YOUR-USERNAME/jscommunicator. My Github username is JLouback, so my jscommunicator repo can be found at https://github.com/JLouback/jscommunicator.
 
@@ -31,7 +32,7 @@ You should now have your own JSCommunicator repository on your Github account. O
 
 Now you should download all that code to your local machine so you can edit it. On your JSCommunicator page somewhere around the lower right corner you'll see a field entitled HTTPS clone URL:
 
-![clone]({{ site.url }}/assets/cloneURL.jpg)
+![clone](/assets/cloneURL.jpg)
 
 I don't know if this is correct, but you can just copy the URL on your browser too. I do that.
 
@@ -78,7 +79,7 @@ Go back to the root directory (jscommunicator) and open the file named 'availabl
 
 Save your changes and voila!
 
-**Test you work**
+**Test your work**
 
 Once you've made a .properties file, JSCommunicator will automatically load your translation if you've set your browser preference to that language. If your browser preference is french, it will load the Messages_fr.properties. If your browser preference is a language we don't have a translation for (let's say german), JScommunicator will load the default Messages.properties file which is in english. 
 
@@ -108,9 +109,15 @@ You should now see the changes you made in your Github account page at github.co
 **Pull**
 
 Now it's time to share your translation with everyone else if you feel so inclined. Your version of JSCommunicator has a new translation but not the official version. First navigate to you jscommunicator repo at github.com/YOUR_USER/jscommunicator and make sure you are on the i18n-branch as that will contain your changes.
-![branches]({{ site.url }}/assets/branches.jpg)
+
+![branches](/assets/branches.jpg)
+
 Click the green button directly to the left of the branch drop down menu shown above. This will create a pull request to add your new code to the official jscommunicator code. Once you click that button, you should see this:
-![pull]({{ site.url }}/assets/pull.jpg)
+
+![pull](/assets/pull.jpg)
+
 Make sure that the base repo (the first on the line above the green Create pull request button) is opentelecoms-org:**i18n-support** and not opentelecoms-org:**master** or another branch name. If it is, just click 'Edit' on the right and you'll be able to select the branch from a dropdown like so:
-![pullEdit]({{ site.url }}/assets/pullEdit.jpg)
+
+![pullEdit](/assets/pullEdit.jpg)
+
 If first repo is opentelecoms-org:i18n-support and the second is YOUR_USER:i18n-support and you've verified (scroll down) that there are 2 files changed which are your new .properties file and the added element to the available_languages.ruby, go ahead and press create pull request. It'll open a window with a text box you can add an explanation to with one final 'Create pull request' button. Click that and you're done! You've kindly contributed with a translation for JSCommunicator! 
