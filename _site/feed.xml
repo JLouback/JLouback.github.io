@@ -5,15 +5,133 @@
     <description>An informal account of my adventures in coding, including scattered moments of genius as well as my more common stupidities. I intend to cover a variety of themes, the current trend is WebRTC.</description>
     <link>http://julianalouback.com/</link>
     <atom:link href="http://julianalouback.com/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Wed, 16 Jul 2014 16:41:32 -0300</pubDate>
-    <lastBuildDate>Wed, 16 Jul 2014 16:41:32 -0300</lastBuildDate>
+    <pubDate>Thu, 17 Jul 2014 17:30:23 -0300</pubDate>
+    <lastBuildDate>Thu, 17 Jul 2014 17:30:23 -0300</lastBuildDate>
     <generator>Jekyll v2.1.1</generator>
+    
+      <item>
+        <title>Contribute a JSCommunicator Translation</title>
+        <description>&lt;p&gt;To those who don’t know, JSCommunicator is a SIP communication tool developed in HTML and JavaScript, currently supporting audio/video calls and SIP SIMPLE instant messaging. We’ve recently added i18n internationalization support for English, Portuguese, Spanish, French and now Hebrew. We would like to have &lt;a href=&quot;https://github.com/opentelecoms-org/jscommunicator/issues/5&quot;&gt;support for other languages&lt;/a&gt; and it’s a pretty straightforward process to add a translation, so even if you do not have a tech background you can contribute!&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Setup&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;First, &lt;a href=&quot;https://github.com/&quot;&gt;create and account in Github&lt;/a&gt;. Github is a hosting service for git repositories and open source projects get to use Github for FREE! As a result, many open source project repositories are hosted on Github, including but not limited to &lt;a href=&quot;https://github.com/opentelecoms-org/jscommunicator&quot;&gt;JSCommunicator&lt;/a&gt;. &lt;/p&gt;
+
+&lt;p&gt;Once you have created your git account, follow steps 1-4 in the section Setting up git listed in &lt;a href=&quot;https://help.github.com/articles/set-up-git&quot;&gt;Github’s setup tutorial&lt;/a&gt;. This will help you install git and configure anything you need. &lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Fork&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Now fork the JSCommunicator repo. I really like the word ‘fork’. Great term. If this is your first fork, know that this will make a copy of the JSCommunicator repo and all its respective code to your Github account. Here’s how we go about it:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;Sign in to &lt;a href=&quot;http://github.com&quot;&gt;Github&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Browse to https://github.com/JLouback/jscommunicator&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Somewhere around the upper left corner, you will see a button labeled ‘Fork’. Click that. 
+&lt;img src=&quot;http://julianalouback.com/assets/fork.jpg&quot; alt=&quot;fork&quot; /&gt;&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;You should now have your own JSCommunicator repository on your Github account. On your main page select the tab ‘Repositories’. It should be the first on the list. The url will be https://github.com/YOUR-USERNAME/jscommunicator. My Github username is JLouback, so my jscommunicator repo can be found at https://github.com/JLouback/jscommunicator.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Clone&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Now you should download all that code to your local machine so you can edit it. On your JSCommunicator page somewhere around the lower right corner you’ll see a field entitled HTTPS clone URL:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://julianalouback.com/assets/cloneURL.jpg&quot; alt=&quot;clone&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;I don’t know if this is correct, but you can just copy the URL on your browser too. I do that.&lt;/p&gt;
+
+&lt;p&gt;Now on your terminal, navigate to the directory you’d like to place your repository and enter&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;git&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;clone&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;https&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;//&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;github&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;com&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;YOUR&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;USERNAME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;jscommunicator&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;The current directory should now have a folder named ‘jscommunicator’ and in it is all the JSCommunicator code. &lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Switch branches&lt;/strong&gt;
+The JSCommunicator repo has a branch for the i18n support. A branch is basically a copy of the code that you can modify without changing the original code. It’s great for adding new features, once everything is done and tested you can add the new feature to the original code. A more detailed explanation of branches can be found &lt;a href=&quot;https://help.github.com/articles/creating-and-deleting-branches-within-your-repository&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;On the terminal, enter &lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;cd&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;jscommunicator&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;git&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;branch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This will list all the branches in the repository, both local and remote. There should be a branch named ‘remotes/origin/i18n-support’. Switch to this branch by entering&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;git&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;checkout&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;--&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;track&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;origin&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i18n&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;support&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This will create a local branch named i18n-support with all the contents of the remote i18n-branch in https://github.com/opentelecoms-org/jscommunicator.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Create a .properties file&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Now your jscommunicator directory will have some new files for the internationalization functionality. Among them you should find an INTERNATIONALIZATION_README file with instructions for adding a JSCommunicator translation. It’s a less detailed version of this post, but it’s worth a read in case I’ve missed something here. &lt;/p&gt;
+
+&lt;p&gt;Go to the directory ‘internationalization’. You’ll see a few .properties files with different language codes. Choose the language of your preference for the translation base and make a copy of it in the internationalization directory. Your copy should be named ‘Messages_LANGUAGECODE.properties’. For example, the language code for german is ‘de’, so the german file should be named ‘Messages_de.properties’. If you’re not sure about the code for your language, please check out this &lt;a href=&quot;http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes&quot;&gt;list of ISO 639-1 language codes&lt;/a&gt; so you’re using the same code as (most) browsers. &lt;/p&gt;
+
+&lt;p&gt;The .properties file is list of key-value pairs, a word or a few words joined by ‘_’ which is the key, the equals sign ‘=’ then a word or phrase which is the value. Do &lt;em&gt;not&lt;/em&gt; change anything to the &lt;em&gt;left&lt;/em&gt; of the equals sign. Translate what is on the &lt;em&gt;right&lt;/em&gt; of the equals sign. &lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Add to available_languages.ruby&lt;/strong&gt;
+Go back to the root directory (jscommunicator) and open the file named ‘available_languages.ruby’. This .ruby has a series of language elements. At the end of the last ‘&amp;lt;/language&amp;gt;’ add a new language element with your language display name and code, copying the previous languge elements. You actually can put your language element anwhere, as long as it’s after the ‘&lt;list&gt;&#39; and before the &lt;/list&gt;, as well as not cutting into any of the other language elements. Your display name should be the name of the language in its native language, for example for a french translation we’ll put ‘Français’ (I think). And the code is the code we used for the .properties file. Here’s how it should look:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;language&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;display&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Deutsch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/display&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;sr&quot;&gt;    &amp;lt;code&amp;gt;de&amp;lt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;code&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/language&amp;gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Save your changes and voila!&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Test you work&lt;/strong&gt;
+Once you’ve made a .properties file, JSCommunicator will automatically load your translation if you’ve set your browser preference to that language. If your browser preference is french, it will load the Messages_fr.properties. If your browser preference is a language we don’t have a translation for (let’s say german), JScommunicator will load the default Messages.properties file which is in english. &lt;/p&gt;
+
+&lt;p&gt;The available_languages.ruby is used to build a language selection menu. If you add a language element without a corresponding .properties file, JSCommunicator will throw a JS error and load the default (english) translation. The same happens if you use different language codes in the .properties file name and the available_languages.ruby. The error won’t disturb your use of JSCommunicator, it just won’t load the language you selected. No harm, no foul. But if you want others to use your translation, do take care to do this correctly.&lt;/p&gt;
+
+&lt;p&gt;If you read the INTERNATIONALIZATION_README, you will have seen that we need the jquery.i18n.properties.js file that’s included in the .html pages. You can download that code &lt;a href=&quot;https://code.google.com/p/jquery-i18n-properties/&quot;&gt;here&lt;/a&gt;. Be sure to place it in the jscommunicator directory. This is only necessary if you want to see your addition at work, you don’t need this file to contribute your translation. There are other 3rd party code dependencies to run JSCommunicator too as you may have noticed. Just creating the .properties file and adding a language element to available_languages.ruby, if done correctly, is enough to make a pull request. &lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Commit&lt;/strong&gt;
+Here’s the part where we load all your local changes to your remote repository. In the terminal, navigate to the root directory (jscommunicator) and enter&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;git&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;add&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;internationalization&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Messages_de&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;properties&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;git&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;add&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;available_languages&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ruby&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Of course, please replace ‘Messages_de.properties’ with the name of your new .properties file. And mind you, we don’t have a german translation yet!&lt;/p&gt;
+
+&lt;p&gt;Then enter&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;git&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;commit&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;German translation&amp;quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;You can enter whatever you’d like in the “ “ part, it’s a good idea to explain what language you are adding. Now we can push the changes:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;git&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;push&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;u&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;origin&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i18n&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;support&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;You should now see the changes you made in your Github account page at github.com/YOUR_USER/jscommunicator. The message you put in double quotations (“ “) in the commit will be beside each modified file. This push also creates a new branch in your jscommunicator repository, now you will have a ‘master’ and a ‘i18n-support’ branch.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Pull&lt;/strong&gt;
+Now it’s time to share your translation with everyone else if you feel so inclined. Your version of JSCommunicator has a new translation but not the official version. First navigate to you jscommunicator repo at github.com/YOUR_USER/jscommunicator and make sure you are on the i18n-branch as that will contain your changes.
+&lt;img src=&quot;http://julianalouback.com/assets/branches.jpg&quot; alt=&quot;branches&quot; /&gt;
+Click the green button directly to the left of the branch drop down menu shown above. This will create a pull request to add your new code to the official jscommunicator code. Once you click that button, you should see this:
+&lt;img src=&quot;http://julianalouback.com/assets/pull.jpg&quot; alt=&quot;pull&quot; /&gt;
+Make sure that the base repo (the first on the line above the green Create pull request button) is opentelecoms-org:&lt;strong&gt;i18n-support&lt;/strong&gt; and not opentelecoms-org:&lt;strong&gt;master&lt;/strong&gt; or another branch name. If it is, just click ‘Edit’ on the right and you’ll be able to select the branch from a dropdown like so:
+&lt;img src=&quot;http://julianalouback.com/assets/pullEdit.jpg&quot; alt=&quot;pullEdit&quot; /&gt;
+If first repo is opentelecoms-org:i18n-support and the second is YOUR_USER:i18n-support and you’ve verified (scroll down) that there are 2 files changed which are your new .properties file and the added element to the available_languages.ruby, go ahead and press create pull request. It’ll open a window with a text box you can add an explanation to with one final ‘Create pull request’ button. Click that and you’re done! You’ve kindly contributed with a translation for JSCommunicator! &lt;/p&gt;
+</description>
+        <pubDate>Thu, 17 Jul 2014 05:06:52 -0300</pubDate>
+        <link>http://julianalouback.com/tutorial/2014/07/17/contribute-a-jscommunicator-translation/</link>
+        <guid isPermaLink="true">http://julianalouback.com/tutorial/2014/07/17/contribute-a-jscommunicator-translation/</guid>
+        
+        
+        <category>tutorial</category>
+        
+      </item>
     
       <item>
         <title>Become an Open-source Contributor Video Conference</title>
         <description>&lt;p&gt;A couple weeks ago I was contacted by Yehuda Korotkin through one of the Debian mailing lists. Yehuda is a tech professor at one of Israel’s leading colleges for women. He proposed a video conference to present the open source community to his class and explain how they can contribute to open source projects. I volunteered to participate and last Monday (July 14th 2014) we had our virtual meeting, which I hope was the first of many. &lt;/p&gt;
 
-&lt;p&gt;Shauna G. also participated from Boston, making it a Israel - USA - Brazil meetup. Pretty impressive, eh? The conference was hosted on Google Hangouts, the recording is available for viewing &lt;a href=&quot;https://plus.google.com/u/0/events/csd9aj935ungd3qjsl6kaf0d2tg&quot;&gt;here&lt;/a&gt;. Run time is around 2.5 hours so to save you time I’ve kindly posted a summary of the conference! To be frank, I look ghastly half the time so I’d much prefer that you read this post.&lt;/p&gt;
+&lt;p&gt;Shauna G. also participated from Boston, making it a Israel - USA - Brazil meetup. Pretty impressive, eh? The conference was hosted on Google Hangouts, the video is available for viewing &lt;a href=&quot;https://plus.google.com/u/0/events/csd9aj935ungd3qjsl6kaf0d2tg&quot;&gt;here&lt;/a&gt;. Run time is around 2.5 hours so to save you time I’ve kindly posted a summary of the conference! To be frank, I look ghastly half the time so I’d much prefer that you read this post.&lt;/p&gt;
 
 &lt;p&gt;First there was a Q&amp;amp;A period which was more of a discussion panel, followed by a hands-on session where the girls made their first contribution to an open source project. Here’s the gist of it:&lt;/p&gt;
 
