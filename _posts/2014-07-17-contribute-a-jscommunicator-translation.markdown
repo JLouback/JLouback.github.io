@@ -43,6 +43,7 @@ git clone https://github.com/YOUR-USERNAME/jscommunicator
 The current directory should now have a folder named 'jscommunicator' and in it is all the JSCommunicator code. 
 
 **Switch branches**
+
 The JSCommunicator repo has a branch for the i18n support. A branch is basically a copy of the code that you can modify without changing the original code. It's great for adding new features, once everything is done and tested you can add the new feature to the original code. A more detailed explanation of branches can be found [here](https://help.github.com/articles/creating-and-deleting-branches-within-your-repository).
 
 On the terminal, enter 
@@ -65,7 +66,8 @@ Go to the directory 'internationalization'. You'll see a few .properties files w
 
 The .properties file is list of key-value pairs, a word or a few words joined by '_' which is the key, the equals sign '=' then a word or phrase which is the value. Do *not* change anything to the *left* of the equals sign. Translate what is on the *right* of the equals sign. 
 
-**Add to available_languages.ruby**
+**Modify available_languages.xml**
+
 Go back to the root directory (jscommunicator) and open the file named 'available_languages.ruby'. This .ruby has a series of language elements. At the end of the last '</language>' add a new language element with your language display name and code, copying the previous languge elements. You actually can put your language element anwhere, as long as it's after the '<list>' and before the </list>, as well as not cutting into any of the other language elements. Your display name should be the name of the language in its native language, for example for a french translation we'll put 'Français' (I think). And the code is the code we used for the .properties file. Here's how it should look:
 {% highlight ruby %}
 <language>
@@ -77,6 +79,7 @@ Go back to the root directory (jscommunicator) and open the file named 'availabl
 Save your changes and voila!
 
 **Test you work**
+
 Once you've made a .properties file, JSCommunicator will automatically load your translation if you've set your browser preference to that language. If your browser preference is french, it will load the Messages_fr.properties. If your browser preference is a language we don't have a translation for (let's say german), JScommunicator will load the default Messages.properties file which is in english. 
 
 The available_languages.ruby is used to build a language selection menu. If you add a language element without a corresponding .properties file, JSCommunicator will throw a JS error and load the default (english) translation. The same happens if you use different language codes in the .properties file name and the available_languages.ruby. The error won't disturb your use of JSCommunicator, it just won't load the language you selected. No harm, no foul. But if you want others to use your translation, do take care to do this correctly.
@@ -84,6 +87,7 @@ The available_languages.ruby is used to build a language selection menu. If you 
 If you read the INTERNATIONALIZATION_README, you will have seen that we need the jquery.i18n.properties.js file that's included in the .html pages. You can download that code [here]( https://code.google.com/p/jquery-i18n-properties/). Be sure to place it in the jscommunicator directory. This is only necessary if you want to see your addition at work, you don't need this file to contribute your translation. There are other 3rd party code dependencies to run JSCommunicator too as you may have noticed. Just creating the .properties file and adding a language element to available_languages.ruby, if done correctly, is enough to make a pull request. 
 
 **Commit**
+
 Here's the part where we load all your local changes to your remote repository. In the terminal, navigate to the root directory (jscommunicator) and enter
 {% highlight ruby %}
 git add internationalization/Messages_de.properties
@@ -102,6 +106,7 @@ git push -u origin i18n-support
 You should now see the changes you made in your Github account page at github.com/YOUR_USER/jscommunicator. The message you put in double quotations (" ") in the commit will be beside each modified file. This push also creates a new branch in your jscommunicator repository, now you will have a 'master' and a 'i18n-support' branch.
 
 **Pull**
+
 Now it's time to share your translation with everyone else if you feel so inclined. Your version of JSCommunicator has a new translation but not the official version. First navigate to you jscommunicator repo at github.com/YOUR_USER/jscommunicator and make sure you are on the i18n-branch as that will contain your changes.
 ![branches]({{ site.url }}/assets/branches.jpg)
 Click the green button directly to the left of the branch drop down menu shown above. This will create a pull request to add your new code to the official jscommunicator code. Once you click that button, you should see this:

@@ -31,7 +31,7 @@ First there was a Q&A period which was more of a discussion panel, followed by a
 
 For the practical part of our conference, Yehuda's students contributed to [Jscommunicator's](https://github.com/opentelecoms-org/jscommunicator) Issue [#5](https://github.com/opentelecoms-org/jscommunicator/issues/5) which requests i18n support for major languages. JSCommunicator is a SIP communication tool developed in HTML and JavaScript, currently supporting audio/video calls and SIP SIMPLE instant messaging.
 
-First we set up Github in their local machines and forked the Jscommunicator repo. We learned the basic git commands needed to push changes to their remote repositories and to create a pull requests. This is explained in further detail here.
+First we set up Github in their local machines and forked the Jscommunicator repo. We learned the basic git commands needed to push changes to their remote repositories and to create a pull requests. This is explained in further detail here{% post_url 2014-07-14-contribute-a-jscommunicator-translation %}.
 
 At the end of the conference with nearly an hour overtime due to my tendency to be overly verbose, Yehuda's class made their first contribution with a [Hebrew translation for Jscommunicator](https://github.com/opentelecoms-org/jscommunicator/pull/32)! 
 
