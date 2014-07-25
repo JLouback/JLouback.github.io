@@ -31,7 +31,7 @@ chances are, you have the wrong version. That's what happened to me. The Vagrant
 
 So by now we should have the Vagrant Virtual Development Environment set up and the web app up and running and accessible at localhost:8443. So far so good.
 
-*Disclaimer: You will note that much of this is similar to xTuple's [tutorial](https://github.com/xtuple/xtuple-extensions/blob/master/docs/TUTORIAL.md) but there are some small but important differences. Other Disclaimer: I'm describing how I did it, which may or may not be 'up to snuff'. Works for me though.*
+*Disclaimer: You will note that much of this is similar - or rather, nearly identical - to xTuple's [tutorial](https://github.com/xtuple/xtuple-extensions/blob/master/docs/TUTORIAL.md) but there are some small but important differences and a few observations I think might be useful. Other Disclaimer: I'm describing how I did it, which may or may not be 'up to snuff'. Works for me though.*
 
 **Schema**
 
