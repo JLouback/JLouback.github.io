@@ -1,0 +1,300 @@
+---
+layout: post
+title:  "Extending an XTuple Business Object"
+date:   2014-07-25 15:06:52
+categories: tech
+---
+
+[xTuple](http://www.xtuple.com/) is in my opinion incredibly well designed; the code is clean and the architecture ahderent to a standardized structure. All this makes working with xTuple software quite a breeze. 
+
+I wanted to integrate [JSCommunicator](https://github.com/opentelecoms-org/jscommunicator) into the web-based xTuple version. JSCommunicator is a SIP communication tool, so my first step was to create an extension for the SIP account data. Luckily for me, the xTuple development team published an awesome [tutorial](https://github.com/xtuple/xtuple-extensions/blob/master/docs/TUTORIAL.md) for writing an xTuple extension.
+
+xTuple cleverly uses model based business objects for the various features available. This makes customizing xTuple very straightforward. I used the tutorial mentioned above for writing my extension, but soon noticed my goals were a little different. A SIP account has 3 data fields, these being the SIP URI, the account password and an optional display name. xTuple currently has a business object in the core code for a User Account and it would make a lot more sense to simply add my 3 fields to this existing business object rather than create another business object. The tutorial very clearly shows how to extend a business object with another business object, but not how to extend a business object with only new fields (not a whole new object). 
+
+Now maybe I'm just a whole lot slower than most people, but I had a ridiculously had time figuring this out. Mind you, this is because I'm slow, because the xTuple documentation and code is understandable and as self-explanatory as it gets. I think it just takes a bit to get used to. Either way, I thought this just might be useful to others so here is how I went about it.
+
+**Setup**
+
+First you'll have to set up your xTuple development environment and fork the xtuple and xtuple-extesions repositories as shown in [this handy tutorial](https://github.com/xtuple/xtuple-vagrant/blob/master/README.md). A footnote I'd like to add is please verify that your version of Vagrant (and anything else you install) is the one listed in the tutorial. I think I spent like two entire days or more on a wild goose (bug) chase trying to set up my environment when the cause of all the errors was that I somehow installed an older version of Vagrant - 1.5.4 instead of 1.6.3. Please don't make the same mistake I did. Actually if for some reason you get the following error when you try using node:
+
+{% highlight ruby %}
+<<ERROR 2014-07-10T23:52:46.948Z>> Unrecoverable exception. Cannot call method 'extend' of undefinedTypeError: Cannot call method 'extend' of undefined
+
+    at /home/vagrant/dev/xtuple/lib/backbone-x/source/model.js:37:39
+
+    at Object.<anonymous> (/home/vagrant/dev/xtuple/lib/backbone-x/source/model.js:1364:3)
+
+    ...
+{% endhighlight %}
+chances are, you have the wrong version. That's what happened to me. The Vagrant Virtual Development Environment automatically installs and configures everything you need, it's ready to go. So if you find yourself installing and updating and apt-gets and etc, you probably did something wrong. 
+
+**Coding**
+So by now we should have the Vagrant Virtual Development Environment set up and the web app up and running and accessible at localhost:8443. So far so good.
+
+*Disclaimer: You will note that much of this is similar to xTuple's [tutorial](https://github.com/xtuple/xtuple-extensions/blob/master/docs/TUTORIAL.md) but there are some small but important differences. Other Disclaimer: I'm describing how I did it, which may or may not be 'up to snuff'. Works for me though.*
+
+**Schema**
+First let's make a schema for the table we will create with the new custom fields. Be sure to create the correct directory stucture, aka  {% highlight ruby %}/path/to/xtuple-extensions/source/<YOUR EXTENSION NAME>/database/source{% endhighlight %}, in my case {% highlight ruby %}/path/to/xtuple-extensions/source/sip_account/database/source{% endhighlight %}, and create the file {% highlight ruby %}create_sa_schema.sql{% endhighlight %}, 'sa' is the name of my schema. This file will contain the following lines:
+
+{% highlight ruby %}
+do $$
+  /* Only create the schema if it hasn't been created already */
+  var res, sql = "select schema_name from information_schema.schemata where schema_name = 'sa'",
+  res = plv8.execute(sql);
+  if (!res.length) {
+    sql = "create schema sa; grant all on schema sa to group xtrole;"
+    plv8.execute(sql);
+  }
+$$ language plv8;
+{% endhighlight %}
+
+Of course, feel free to replace 'sa' with your schema name of choice. All the code described here can be found in my xtuple-extensions fork, on the [sip_ext branch](https://github.com/JLouback/xtuple-extensions/tree/sip_ext).
+
+**Table**
+We'll create a table containing your custom fields and a link to an existing table - the table for the existing business object you want to extend. If you're wondering why, here's a good [explanation](https://github.com/xtuple/xtuple-extensions/blob/master/docs/TUTORIAL-FAQ.md#why-do-we-need-a-new-table-to-extend-contact), the case in question is adding fields to the Contact business object.
+
+You need to first figure out what table you want to link to. This might not be uber easy. I think the best way to go about it is to look at the ORMs. The xTuple ORMs are a JSON mapping between the SQL tables and the object-oriented world above the database, they're .json files found at path/to/xtuple/node_modules/xtuple/enyo-client/database/orm/models for the core business objects and at path/to/xtuplenyo-client/extensions/source/<EXTENSION NAME>/database/orm/models for exension business objects. I'll give two examples. If you look at [contact.json](https://github.com/xtuple/xtuple/blob/master/enyo-client/database/orm/models/contact.json#L6) you will see that the Contact business object refers to the table "cntct". Look for the "type": "Contact" on the [line above](https://github.com/xtuple/xtuple/blob/master/enyo-client/database/orm/models/contact.json#L5), so we know it's the "Contact" business object. In my case, I wanted to extend the UserAccount and UserAccountRelation business objects, so check out [user_account.json](https://github.com/xtuple/xtuple/blob/master/enyo-client/database/orm/models/user_account.json). The table listed for [UserAccount is xt.usrinfo](https://github.com/xtuple/xtuple/blob/master/enyo-client/database/orm/models/user_account.json#L314) and the table listed for [UserAccountRelation is xt.usrlite](https://github.com/xtuple/xtuple/blob/master/enyo-client/database/orm/models/user_account.json#L448). A closer look at these files ([usrinfo.sql](https://github.com/xtuple/xtuple/blob/master/enyo-client/database/source/xt/views/usrinfo.sql) and [usrlite.sql](https://github.com/xtuple/xtuple/blob/master/enyo-client/database/source/xt/tables/usrlite.sql)) revealed that usrinfo is in fact a view and usrlite is 'A light weight table of user information used to avoid punishingly heavy queries on the public usr view'. I chose to refer to xt.usrlite - that or I received error messages when trying the other names, will confirm later. 
+
+Now I'll make the file {% highlight ruby %}/path/to/xtuple-extensions/source/sip_account/database/source/usrlitesip.sql{% endhighlight %},  to create a table with my custom fields plus the link to the urslite table. Don't quote me on this, but I'm under the impression that this is the norm for names for joining tables, the name of the table you are referring to ('usrlite' in this case) and your extension name. 
+Content of usrlitesip.sql:
+
+{% highlight ruby %}
+select xt.create_table('usrlitesip', 'sa');
+
+select xt.add_column('usrlitesip','usrlitesip_id', 'serial', 'primary key', 'sa');
+select xt.add_column('usrlitesip','usrlitesip_usr_username', 'text', 'references xt.usrlite (usr_username)', 'sa');
+select xt.add_column('usrlitesip','usrlitesip_uri', 'text', '', 'sa');
+select xt.add_column('usrlitesip','usrlitesip_name', 'text', '', 'sa');
+select xt.add_column('usrlitesip','usrlitesip_password', 'text', '', 'sa');
+
+comment on table sa.usrlitesip is 'Joins User with SIP account';
+{% endhighlight %}
+
+Breaking it down, line 1 creates the table named 'usrlitesip' (no duh), line 2 is for the primary key (self-explanatory). You can then add any columns you like, just be sure to add one that references the table you want to link to. I checked [usrlite.sql and saw the primary key is usr_username}(https://github.com/xtuple/xtuple/blob/master/enyo-client/database/source/xt/tables/usrlite.sql#L3), be sure to use the primary key of the table you are referencing. 
+
+You can check what you made by executing the .sql files like so:
+
+{% highlight ruby %}
+$ cd /path/to/xtuple-extensions/source/sip_account/database/source
+$ psql -U admin -d dev -f create_sa_schema.sql
+$ psql -U admin -d dev -f usrlitesip.sql
+{% endhighlight %}
+
+After which you will see the empty table if you enter:
+{% highlight ruby %}
+$ psql -U admin -d dev -c "select * from sa.usrlitesip;"
+{% endhighlight %}
+
+Now create the file {% highlight ruby %}/path/to/xtuple-extensions/source/sip_account/database/source/manifest.js{% endhighlight %} to put the files together and in the right order. It should contain:
+{% highlight ruby %}
+{
+  "name": "sip_account",
+  "version": "1.4.1",
+  "comment": "Sip Account extension",
+  "loadOrder": 999,
+  "dependencies": ["crm"],
+  "databaseScripts": [
+    "create_sa_schema.sql",
+    "usrlitesip.sql",
+    "register.sql"
+  ]
+}
+{% endhighlight %}
+
+I think the "name" has to be the same you named your extension directory as in {% highlight ruby %}/path/to/xtuple-extensions/source/<YOUR EXTENSION NAME>{% endhighlight %}. I think the "comment" can be anything, you want your "loadOrder" to be high so it's the last thing installed (as it's an add on.) So far we are doing exactly what's instructed in the xTuple tutorial. It's repetitive, but I think you can never have too many examples to compare to. In "databaseScripts" you will list the two .sql files you just created for the schema and the table, plus another file to be made in the same directory named {% highlight ruby %}register.sql{% endhighlight %}.
+
+I'm not sure why you have to make the {% highlight ruby %}register.sql{% endhighlight %} or even if you indeed have to. If you leave the file empty, there will be a build error, so put a ';' in the {% highlight ruby %}register.sql{% endhighlight %} or remove the line {% highlight ruby %}"register.sql"{% endhighlight %} from {% highlight ruby %}manifest.js{% endhighlight %} as I think for now we are good without it.
+
+Now let's update the database with our new extension:
+{% highlight ruby %}
+$ cd /path/to/xtuple
+$ ./scripts/build_app.js -d dev -e ../xtuple-extensions/source/sip_account
+$ psql -U admin -d dev -c "select * from xt.ext;"
+{% endhighlight %}
+
+That last command should display a table with a list of extensions; the ones already in xtuple like 'crm' and 'billing' and some others plus your new extension, in this case 'sip_account'. When you run {% highlight ruby %}$ ./scripts/build_app.js -d dev -e ../xtuple-extensions/source/sip_account {% endhighlight %} you'll probably see a message along the lines of "<Extension name> has no client code, not building client code" and that's fine because yeah, we haven't worked on the client code yet.
+
+**ORM**
+Here's where things start getting different. So ORMs link your object to an SQL table. But we DON'T want to make a *new* business object, we want to extend an *existing* business object, so the ORM we will make will be a little different than the xTuple tutorial. [Steve Hackbarth](https://github.com/shackbarth) kindly explained this new business object/existing business object ORM concept [here](https://github.com/xtuple/xtuple/issues/1685). 
+
+First we'll create the directory {% highlight ruby %}/path/to/xtuple-extensions/source/sip_account/database/orm/ext{% endhighlight %}, according to xTuple convention. ORMS for new business objects would be put in {% highlight ruby %}/path/to/xtuple-extensions/source/sip_account/database/orm/models{% endhighlight %}. Now we'll create the .json file {% highlight ruby %}/path/to/xtuple-extensions/source/sip_account/database/orm/ext/user_account.jscon{% endhighlight %} for our ORM. Once again, don't quote me on this, but I think the name of the file should be the name of the business object you are extending, as is done in the [turorial example extending the Contact object](https://github.com/xtuple/xtuple-extensions/blob/master/sample/icecream/database/orm/ext/contact.json). In our case, UserAccount is defined in user_account.json and that's what I named my extension ORM too.
+Here's what you should place in it:
+
+{% highlight ruby %}
+[
+  {
+    "context": "sip_account",
+    "nameSpace": "XM",
+    "type": "UserAccount",
+    "table": "sa.usrlitesip",
+    "isExtension": true,
+    "isChild": false,
+    "comment": "Extended by Sip",
+    "relations": [
+      {
+        "column": "usrlitesip_usr_username",
+        "inverse": "username"
+      }
+    ],
+    "properties": [
+      {
+        "name": "uri",
+        "attr": {
+          "type": "String",
+          "column": "usrlitesip_uri",
+          "isNaturalKey": true
+        }
+      },
+      {
+        "name": "displayName",
+        "attr": {
+          "type": "String",
+          "column": "usrlitesip_name"
+        }
+      },
+      {
+        "name": "sipPassword",
+        "attr": {
+          "type": "String",
+          "column": "usrlitesip_password"
+        }
+      }
+    ],
+    "isSystem": true
+  },
+  {
+    "context": "sip_account",
+    "nameSpace": "XM",
+    "type": "UserAccountRelation",
+    "table": "sa.usrlitesip",
+    "isExtension": true,
+    "isChild": false,
+    "comment": "Extended by Sip",
+    "relations": [
+      {
+        "column": "usrlitesip_usr_username",
+        "inverse": "username"
+      }
+    ],
+    "properties": [
+      {
+        "name": "uri",
+        "attr": {
+          "type": "String",
+          "column": "usrlitesip_uri",
+          "isNaturalKey": true
+        }
+      },
+      {
+        "name": "displayName",
+        "attr": {
+          "type": "String",
+          "column": "usrlitesip_name"
+        }
+      },
+      {
+        "name": "sipPassword",
+        "attr": {
+          "type": "String",
+          "column": "usrlitesip_password"
+        }
+      }
+    ],
+    "isSystem": true
+  }
+]
+{% endhighlight %}
+
+Note the "context" is my extension name, because the context + nameSpace + type combo has to be unique. We already have a UserAccount and UserAccountRelation object in the "XM" namespace in the "xtuple" context in the original [user_account.json](https://github.com/xtuple/xtuple/blob/master/enyo-client/database/orm/models/user_account.json#L310), now we will have a UserAccount and UserAccountRelation object in the "XM" namespace in the "sip_account" conext. What else is important? Node that "isExtension" is **true** on lines 7 and 47 and the "relations" item contains the "column" of the foreign key we referenced. 
+
+This is something you might want to verify: "column" (lines 12 and 52) is the name of the attribute on *your* table. When we made a reference to the primary key usr_usrname from the xt.usrlite table we named that column usrlitesip_usr_usrname. But the "inverse" is not the .sql name but rather the attribute name associated with the original sql table in the original ORM. Did I lose you? I had a lot of trouble with this silly thing. In the original ORM that created a new UserAccount business object, the primary key attribute is named "username", as can be seen [here](https://github.com/xtuple/xtuple/blob/master/enyo-client/database/orm/models/user_account.json#L326-331). That is what should be used for the "inverse" value. Not the sql column name (usr_username) but the object attribute name (username). I'm emphasizing this because I made that mistake and if I can spare you the pain I will.
+
+If we rebuild our extension everything should come along nicely, but you won't see any changes just yet in the web app because we haven't created the client code.
+
+**Client**
+Create the directory {% highlight ruby %}/path/to/xtuple-extensions/source/sip_account/client{% endhighlight %} which is where we'll keep all the client code. I want the fields I added to show up on the form to create a new User Account, so I need to extend the view for the User Account workspace. I'll start by creating a directory {% highlight ruby %}/path/to/xtuple-extensions/source/sip_account/client/views{% endhighlight %} and in it creating a file named 'workspace.js' containing this code:
+
+{% highlight ruby %}
+XT.extensions.sip_account.initWorkspace = function () {
+
+	var extensions = [
+  		{kind: "onyx.GroupboxHeader", container: "mainGroup", content: "_sipAccount".loc()},
+  		{kind: "XV.InputWidget", container: "mainGroup", attr: "uri" },
+  		{kind: "XV.InputWidget", container: "mainGroup", attr: "displayName" },
+  		{kind: "XV.InputWidget", container: "mainGroup", type:"password", attr: "sipPassword" }
+	];
+
+	XV.appendExtension("XV.UserAccountWorkspace", extensions);
+};
+{% endhighlight %}
+
+So I'm initializing my workspace and creating an array of items to add (append) to view XV.UserAccountWorkspace. The first 'item' is this onyx.GroupboxHeader which is a pretty divider for my new items, the kind you find in the web app at Setup > User Accounts, like 'Overview'. I have no idea what other options there are for container other than "mainGroup", so let's stick to that. I'll explain {% ruby highlight %}content: "_sipAccount".loc(){% endhighlight %} in a bit. Next I created three input fields of the XV.InputWidget kind. This also confused me a bit as there are different kinds of input to be used, like dropdowns and checkboxes. The only advice I can give is snoop around the webapp, find an input you like and look up the corresponding workspace.js file to see what was used. 
+
+What we just did is (should be) enough for the new fields to show up on the User Account form. But before we see things change, we have to package the client. Create the file {% highlight ruby %}/path/to/xtuple-extensions/source/sip_account/client/views/package.js{% endhighlight %}. This file is needed to 'package' groups of files and indicates the order the files should be loaded (for more on that, see [this](https://github.com/enyojs/enyo/wiki/Tutorial#you-got-to-keep-it-separated)). For now, all the file will contain is:
+
+{% highlight ruby %}
+enyo.depends(
+	"workspace.js"
+);
+{% endhighlight %}
+
+You also need to package the 'views' directory containing workspace, so create the file Create the file {% highlight ruby %}/path/to/xtuple-extensions/source/sip_account/client/package.js{% endhighlight %} and in it show that the directory 'views' and its contents must be part of the higher level package:
+
+{% highlight ruby %}
+enyo.depends(
+	"views"
+);
+{% endhighlight %}
+
+I like to think of it as a box full of smaller boxes.
+
+This will sound terrible, but apparently you also need to create the file {% highlight ruby %}/path/to/xtuple-extensions/source/sip_account/client/core.js{% endhighlight %} containing this line:
+
+{% highlight ruby %}
+XT.extensions.icecream = {};
+{% endhighlight %}
+
+I don't know why. As soon as I find out I'll be sure to inform you.
+
+As we've added a file to the client directory, be sure to update  {% highlight ruby %}/path/to/xtuple-extensions/source/sip_account/client/package.js{% endhighlight %} so it included the new file:
+
+{% highlight ruby %}
+enyo.depends(
+    "core.js",
+	"views"
+);
+{% endhighlight %}
+
+**Translations** 
+Remember ""_sipAccount".loc()" in our workspace.js file? xTuple has great internationalization support and it's easy to use. Just create the directory and file {% highlight ruby %}/path/to/xtuple-extensions/source/sip_account/client/en/strings.js{% endhighlight %} and in it put key-value pairs for labels and their translation, like this:
+
+{% highlight ruby %}
+(function () {
+  "use strict";
+
+  var lang = XT.stringsFor("en_US", {
+    "_sipAccount": "Sip Account",
+    "_uri": "Sip URI",
+    "_displayName": "Display Name",
+    "_sipPassword": "Password"
+  });
+
+  if (typeof exports !== 'undefined') {
+    exports.language = lang;
+  }
+}());
+{% endhighlight %}
+
+So far I included all the labels I used in my Sip Account form. If you write the wrong label (key) or forget to include a corresponding key-value pair in strings.js, xTuple will simply name your lable "_labelName", underscore and all. 
+
+Now build your extension and start up the server:
+{% highlight ruby %}
+$ cd /path/to/xtuple 
+$ ./scripts/build_app.js -d dev -e ../xtuple-extensions/source/sip_account
+$ node node-datasource/main.js
+{% endhighlight %}
+
+If the server is already running, just stop it and restart it to reflect your changes. 
+
+Now if you go to Setup > User Accounts and click the "+" button, you should see a nice little addition to the form with a 'Sip Account' divider and three new fields. Nice, eh?
+
