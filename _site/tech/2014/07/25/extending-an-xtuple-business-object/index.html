@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Extending an XTuple Business Object</title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="An informal account of my adventures in coding, including scattered moments of genius as well as my more common stupidities. I intend to cover a variety of themes, the current trend is WebRTC.">
+    <link rel="canonical" href="http://julianalouback.com/tech/2014/07/25/extending-an-xtuple-business-object/">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+
+</head>
+
+
+    <body>
+
+    <header class="site-header">
+
+  <div class="wrap">
+
+    <a class="site-title" href="/">Juliana Louback, software dev.</a>
+
+    <nav class="site-nav">
+      <a href="#" class="menu-icon">
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+           viewBox="0 0 18 15" enable-background="new 0 0 18 15" xml:space="preserve">
+          <path fill="#505050" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0
+            h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#505050" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484
+            h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#505050" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0
+            c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+      </a>
+      <div class="trigger">
+        
+          <a class="page-link" href="/about/">About</a>
+        
+          
+        
+          
+        
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrap">
+      <div class="post">
+
+  <header class="post-header">
+    <h1>Extending an XTuple Business Object</h1>
+    <p class="meta">Jul 25, 2014</p>
+  </header>
+
+  <article class="post-content">
+  <p><a href="http://www.xtuple.com/">xTuple</a> is in my opinion incredibly well designed; the code is clean and the architecture ahderent to a standardized structure. All this makes working with xTuple software quite a breeze. </p>
+
+<p>I wanted to integrate <a href="https://github.com/opentelecoms-org/jscommunicator">JSCommunicator</a> into the web-based xTuple version. JSCommunicator is a SIP communication tool, so my first step was to create an extension for the SIP account data. Luckily for me, the xTuple development team published an awesome <a href="https://github.com/xtuple/xtuple-extensions/blob/master/docs/TUTORIAL.md">tutorial</a> for writing an xTuple extension.</p>
+
+<p>xTuple cleverly uses model based business objects for the various features available. This makes customizing xTuple very straightforward. I used the tutorial mentioned above for writing my extension, but soon noticed my goals were a little different. A SIP account has 3 data fields, these being the SIP URI, the account password and an optional display name. xTuple currently has a business object in the core code for a User Account and it would make a lot more sense to simply add my 3 fields to this existing business object rather than create another business object. The tutorial very clearly shows how to extend a business object with another business object, but not how to extend a business object with only new fields (not a whole new object). </p>
+
+<p>Now maybe I’m just a whole lot slower than most people, but I had a ridiculously had time figuring this out. Mind you, this is because I’m slow, because the xTuple documentation and code is understandable and as self-explanatory as it gets. I think it just takes a bit to get used to. Either way, I thought this just might be useful to others so here is how I went about it.</p>
+
+<p><strong>Setup</strong></p>
+
+<p>First you’ll have to set up your xTuple development environment and fork the xtuple and xtuple-extesions repositories as shown in <a href="https://github.com/xtuple/xtuple-vagrant/blob/master/README.md">this handy tutorial</a>. A footnote I’d like to add is please verify that your version of Vagrant (and anything else you install) is the one listed in the tutorial. I think I spent like two entire days or more on a wild goose (bug) chase trying to set up my environment when the cause of all the errors was that I somehow installed an older version of Vagrant - 1.5.4 instead of 1.6.3. Please don’t make the same mistake I did. Actually if for some reason you get the following error when you try using node:</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="o">&lt;&lt;</span><span class="no">ERROR</span> <span class="mi">2014</span><span class="o">-</span><span class="mo">07</span><span class="o">-</span><span class="mi">10</span><span class="ss">T23</span><span class="p">:</span><span class="mi">52</span><span class="p">:</span><span class="mi">46</span><span class="o">.</span><span class="mi">948</span><span class="n">Z</span><span class="o">&gt;&gt;</span> <span class="no">Unrecoverable</span> <span class="n">exception</span><span class="o">.</span> <span class="no">Cannot</span> <span class="n">call</span> <span class="nb">method</span> <span class="s1">&#39;extend&#39;</span> <span class="n">of</span> <span class="ss">undefinedTypeError</span><span class="p">:</span> <span class="no">Cannot</span> <span class="n">call</span> <span class="nb">method</span> <span class="s1">&#39;extend&#39;</span> <span class="n">of</span> <span class="n">undefined</span>
+
+<span class="err">    at /home/vagrant/dev/xtuple/lib/backbone-x/source/model.js:37:39</span>
+
+<span class="err">    at Object.&lt;anonymous&gt; (/home/vagrant/dev/xtuple/lib/backbone-x/source/model.js:1364:3)</span>
+
+<span class="err">    ...</span>
+
+    <span class="n">at</span> <span class="sr">/home/</span><span class="n">vagrant</span><span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">xtuple</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">backbone</span><span class="o">-</span><span class="n">x</span><span class="o">/</span><span class="n">source</span><span class="o">/</span><span class="n">model</span><span class="o">.</span><span class="n">js</span><span class="p">:</span><span class="mi">37</span><span class="p">:</span><span class="mi">39</span>
+
+    <span class="n">at</span> <span class="no">Object</span><span class="o">.</span><span class="n">&lt;anonymous</span><span class="o">&gt;</span> <span class="p">(</span><span class="sr">/home/</span><span class="n">vagrant</span><span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">xtuple</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">backbone</span><span class="o">-</span><span class="n">x</span><span class="o">/</span><span class="n">source</span><span class="o">/</span><span class="n">model</span><span class="o">.</span><span class="n">js</span><span class="p">:</span><span class="mi">1364</span><span class="p">:</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="o">.</span><span class="n">.</span><span class="o">.</span></code></pre></div>
+
+<p>chances are, you have the wrong version. That’s what happened to me. The Vagrant Virtual Development Environment automatically installs and configures everything you need, it’s ready to go. So if you find yourself installing and updating and apt-gets and etc, you probably did something wrong. </p>
+
+<p><strong>Coding</strong>
+So by now we should have the Vagrant Virtual Development Environment set up and the web app up and running and accessible at localhost:8443. So far so good.</p>
+
+<p><em>Disclaimer: You will note that much of this is similar to xTuple’s <a href="https://github.com/xtuple/xtuple-extensions/blob/master/docs/TUTORIAL.md">tutorial</a> but there are some small but important differences. Other Disclaimer: I’m describing how I did it, which may or may not be ‘up to snuff’. Works for me though.</em></p>
+
+<p><strong>Schema</strong>
+First let’s make a schema for the table we will create with the new custom fields. Be sure to create the correct directory stucture, aka<br />
+&lt;div class="highlight"&gt;&lt;pre&gt;<code class="language-ruby" data-lang="ruby"><span class="sr">/path/</span><span class="n">to</span><span class="o">/</span><span class="n">xtuple</span><span class="o">-</span><span class="n">extensions</span><span class="o">/</span><span class="n">source</span><span class="o">/&lt;</span><span class="no">YOUR</span> <span class="no">EXTENSION</span> <span class="no">NAME</span><span class="o">&gt;</span><span class="sr">/database/sou</span><span class="n">rce</span></code>&lt;/pre&gt;&lt;/div&gt;
+, in my case 
+&lt;div class="highlight"&gt;&lt;pre&gt;<code class="language-ruby" data-lang="ruby"><span class="sr">/path/</span><span class="n">to</span><span class="o">/</span><span class="n">xtuple</span><span class="o">-</span><span class="n">extensions</span><span class="o">/</span><span class="n">source</span><span class="o">/</span><span class="n">sip_account</span><span class="o">/</span><span class="n">database</span><span class="o">/</span><span class="n">source</span></code>&lt;/pre&gt;&lt;/div&gt;
+, and create the file 
+&lt;div class="highlight"&gt;&lt;pre&gt;<code class="language-ruby" data-lang="ruby"><span class="n">create_sa_schema</span><span class="o">.</span><span class="n">sql</span></code>&lt;/pre&gt;&lt;/div&gt;
+, ‘sa’ is the name of my schema. This file will contain the following lines:</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">do</span> <span class="vg">$$</span>
+  <span class="sr">/* Only create the schema if it hasn&#39;t been created already */</span>
+  <span class="n">var</span> <span class="n">res</span><span class="p">,</span> <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;select schema_name from information_schema.schemata where schema_name = &#39;sa&#39;&quot;</span><span class="p">,</span>
+  <span class="n">res</span> <span class="o">=</span> <span class="n">plv8</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">res</span><span class="o">.</span><span class="n">length</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;create schema sa; grant all on schema sa to group xtrole;&quot;</span>
+    <span class="n">plv8</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="vg">$$</span> <span class="n">language</span> <span class="n">plv8</span><span class="p">;</span></code></pre></div>
+
+<p>Of course, feel free to replace ‘sa’ with your schema name of choice. All the code described here can be found in my xtuple-extensions fork, on the <a href="https://github.com/JLouback/xtuple-extensions/tree/sip_ext">sip_ext branch</a>.</p>
+
+<p><strong>Table</strong>
+We’ll create a table containing your custom fields and a link to an existing table - the table for the existing business object you want to extend. If you’re wondering why, here’s a good <a href="https://github.com/xtuple/xtuple-extensions/blob/master/docs/TUTORIAL-FAQ.md#why-do-we-need-a-new-table-to-extend-contact">explanation</a>, the case in question is adding fields to the Contact business object.</p>
+
+<p>You need to first figure out what table you want to link to. This might not be uber easy. I think the best way to go about it is to look at the ORMs. The xTuple ORMs are a JSON mapping between the SQL tables and the object-oriented world above the database, they’re .json files found at path/to/xtuple/node_modules/xtuple/enyo-client/database/orm/models for the core business objects and at path/to/xtuplenyo-client/extensions/source/<extension name="">/database/orm/models for exension business objects. I'll give two examples. If you look at [contact.json](https://github.com/xtuple/xtuple/blob/master/enyo-client/database/orm/models/contact.json#L6) you will see that the Contact business object refers to the table "cntct". Look for the "type": "Contact" on the [line above](https://github.com/xtuple/xtuple/blob/master/enyo-client/database/orm/models/contact.json#L5), so we know it's the "Contact" business object. In my case, I wanted to extend the UserAccount and UserAccountRelation business objects, so check out [user_account.json](https://github.com/xtuple/xtuple/blob/master/enyo-client/database/orm/models/user_account.json). The table listed for [UserAccount is xt.usrinfo](https://github.com/xtuple/xtuple/blob/master/enyo-client/database/orm/models/user_account.json#L314) and the table listed for [UserAccountRelation is xt.usrlite](https://github.com/xtuple/xtuple/blob/master/enyo-client/database/orm/models/user_account.json#L448). A closer look at these files ([usrinfo.sql](https://github.com/xtuple/xtuple/blob/master/enyo-client/database/source/xt/views/usrinfo.sql) and [usrlite.sql](https://github.com/xtuple/xtuple/blob/master/enyo-client/database/source/xt/tables/usrlite.sql)) revealed that usrinfo is in fact a view and usrlite is 'A light weight table of user information used to avoid punishingly heavy queries on the public usr view'. I chose to refer to xt.usrlite - that or I received error messages when trying the other names, will confirm later. </extension></p>
+
+<p>Now I’ll make the file 
+&lt;div class="highlight"&gt;&lt;pre&gt;<code class="language-ruby" data-lang="ruby"><span class="sr">/path/</span><span class="n">to</span><span class="o">/</span><span class="n">xtuple</span><span class="o">-</span><span class="n">extensions</span><span class="o">/</span><span class="n">source</span><span class="o">/</span><span class="n">sip_account</span><span class="o">/</span><span class="n">database</span><span class="o">/</span><span class="n">source</span><span class="o">/</span><span class="n">usrlitesip</span><span class="o">.</span><span class="n">sql</span></code>&lt;/pre&gt;&lt;/div&gt;
+,  to create a table with my custom fields plus the link to the urslite table. Don’t quote me on this, but I’m under the impression that this is the norm for names for joining tables, the name of the table you are referring to (‘usrlite’ in this case) and your extension name. 
+Content of usrlitesip.sql:</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="nb">select</span> <span class="n">xt</span><span class="o">.</span><span class="n">create_table</span><span class="p">(</span><span class="s1">&#39;usrlitesip&#39;</span><span class="p">,</span> <span class="s1">&#39;sa&#39;</span><span class="p">);</span>
+
+<span class="nb">select</span> <span class="n">xt</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s1">&#39;usrlitesip&#39;</span><span class="p">,</span><span class="s1">&#39;usrlitesip_id&#39;</span><span class="p">,</span> <span class="s1">&#39;serial&#39;</span><span class="p">,</span> <span class="s1">&#39;primary key&#39;</span><span class="p">,</span> <span class="s1">&#39;sa&#39;</span><span class="p">);</span>
+<span class="nb">select</span> <span class="n">xt</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s1">&#39;usrlitesip&#39;</span><span class="p">,</span><span class="s1">&#39;usrlitesip_usr_username&#39;</span><span class="p">,</span> <span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="s1">&#39;references xt.usrlite (usr_username)&#39;</span><span class="p">,</span> <span class="s1">&#39;sa&#39;</span><span class="p">);</span>
+<span class="nb">select</span> <span class="n">xt</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s1">&#39;usrlitesip&#39;</span><span class="p">,</span><span class="s1">&#39;usrlitesip_uri&#39;</span><span class="p">,</span> <span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;sa&#39;</span><span class="p">);</span>
+<span class="nb">select</span> <span class="n">xt</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s1">&#39;usrlitesip&#39;</span><span class="p">,</span><span class="s1">&#39;usrlitesip_name&#39;</span><span class="p">,</span> <span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;sa&#39;</span><span class="p">);</span>
+<span class="nb">select</span> <span class="n">xt</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s1">&#39;usrlitesip&#39;</span><span class="p">,</span><span class="s1">&#39;usrlitesip_password&#39;</span><span class="p">,</span> <span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;sa&#39;</span><span class="p">);</span>
+
+<span class="n">comment</span> <span class="n">on</span> <span class="n">table</span> <span class="n">sa</span><span class="o">.</span><span class="n">usrlitesip</span> <span class="n">is</span> <span class="s1">&#39;Joins User with SIP account&#39;</span><span class="p">;</span></code></pre></div>
+
+<p>Breaking it down, line 1 creates the table named ‘usrlitesip’ (no duh), line 2 is for the primary key (self-explanatory). You can then add any columns you like, just be sure to add one that references the table you want to link to. I checked [usrlite.sql and saw the primary key is usr_username}(https://github.com/xtuple/xtuple/blob/master/enyo-client/database/source/xt/tables/usrlite.sql#L3), be sure to use the primary key of the table you are referencing. </p>
+
+<p>You can check what you made by executing the .sql files like so:</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="err">$</span> <span class="n">cd</span> <span class="sr">/path/</span><span class="n">to</span><span class="o">/</span><span class="n">xtuple</span><span class="o">-</span><span class="n">extensions</span><span class="o">/</span><span class="n">source</span><span class="o">/</span><span class="n">sip_account</span><span class="o">/</span><span class="n">database</span><span class="o">/</span><span class="n">source</span>
+<span class="err">$</span> <span class="n">psql</span> <span class="o">-</span><span class="n">U</span> <span class="n">admin</span> <span class="o">-</span><span class="n">d</span> <span class="n">dev</span> <span class="o">-</span><span class="n">f</span> <span class="n">create_sa_schema</span><span class="o">.</span><span class="n">sql</span>
+<span class="err">$</span> <span class="n">psql</span> <span class="o">-</span><span class="n">U</span> <span class="n">admin</span> <span class="o">-</span><span class="n">d</span> <span class="n">dev</span> <span class="o">-</span><span class="n">f</span> <span class="n">usrlitesip</span><span class="o">.</span><span class="n">sql</span></code></pre></div>
+
+<p>After which you will see the empty table if you enter:</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="err">$</span> <span class="n">psql</span> <span class="o">-</span><span class="n">U</span> <span class="n">admin</span> <span class="o">-</span><span class="n">d</span> <span class="n">dev</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;select * from sa.usrlitesip;&quot;</span></code></pre></div>
+
+<p>Now create the file 
+&lt;div class="highlight"&gt;&lt;pre&gt;<code class="language-ruby" data-lang="ruby"><span class="sr">/path/</span><span class="n">to</span><span class="o">/</span><span class="n">xtuple</span><span class="o">-</span><span class="n">extensions</span><span class="o">/</span><span class="n">source</span><span class="o">/</span><span class="n">sip_account</span><span class="o">/</span><span class="n">database</span><span class="o">/</span><span class="n">source</span><span class="o">/</span><span class="n">manifest</span><span class="o">.</span><span class="n">js</span></code>&lt;/pre&gt;&lt;/div&gt;
+ to put the files together and in the right order. It should contain:</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="p">{</span>
+  <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;sip_account&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.4.1&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;comment&quot;</span><span class="p">:</span> <span class="s2">&quot;Sip Account extension&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;loadOrder&quot;</span><span class="p">:</span> <span class="mi">999</span><span class="p">,</span>
+  <span class="s2">&quot;dependencies&quot;</span><span class="p">:</span> <span class="o">[</span><span class="s2">&quot;crm&quot;</span><span class="o">]</span><span class="p">,</span>
+  <span class="s2">&quot;databaseScripts&quot;</span><span class="p">:</span> <span class="o">[</span>
+    <span class="s2">&quot;create_sa_schema.sql&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;usrlitesip.sql&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;register.sql&quot;</span>
+  <span class="o">]</span>
+<span class="p">}</span></code></pre></div>
+
+<p>I think the “name” has to be the same you named your extension directory as in 
+&lt;div class="highlight"&gt;&lt;pre&gt;<code class="language-ruby" data-lang="ruby"><span class="sr">/path/</span><span class="n">to</span><span class="o">/</span><span class="n">xtuple</span><span class="o">-</span><span class="n">extensions</span><span class="o">/</span><span class="n">source</span><span class="o">/&lt;</span><span class="no">YOUR</span> <span class="no">EXTENSION</span> <span class="no">NAME</span><span class="o">&gt;</span></code>&lt;/pre&gt;&lt;/div&gt;
+. I think the “comment” can be anything, you want your “loadOrder” to be high so it’s the last thing installed (as it’s an add on.) So far we are doing exactly what’s instructed in the xTuple tutorial. It’s repetitive, but I think you can never have too many examples to compare to. In “databaseScripts” you will list the two .sql files you just created for the schema and the table, plus another file to be made in the same directory named 
+&lt;div class="highlight"&gt;&lt;pre&gt;<code class="language-ruby" data-lang="ruby"><span class="n">register</span><span class="o">.</span><span class="n">sql</span></code>&lt;/pre&gt;&lt;/div&gt;
+.</p>
+
+<p>I’m not sure why you have to make the 
+&lt;div class="highlight"&gt;&lt;pre&gt;<code class="language-ruby" data-lang="ruby"><span class="n">register</span><span class="o">.</span><span class="n">sql</span></code>&lt;/pre&gt;&lt;/div&gt;
+ or even if you indeed have to. If you leave the file empty, there will be a build error, so put a ‘;’ in the 
+&lt;div class="highlight"&gt;&lt;pre&gt;<code class="language-ruby" data-lang="ruby"><span class="n">register</span><span class="o">.</span><span class="n">sql</span></code>&lt;/pre&gt;&lt;/div&gt;
+ or remove the line 
+&lt;div class="highlight"&gt;&lt;pre&gt;<code class="language-ruby" data-lang="ruby"><span class="s2">&quot;register.sql&quot;</span></code>&lt;/pre&gt;&lt;/div&gt;
+ from 
+&lt;div class="highlight"&gt;&lt;pre&gt;<code class="language-ruby" data-lang="ruby"><span class="n">manifest</span><span class="o">.</span><span class="n">js</span></code>&lt;/pre&gt;&lt;/div&gt;
+ as I think for now we are good without it.</p>
+
+<p>Now let’s update the database with our new extension:</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="err">$</span> <span class="n">cd</span> <span class="sr">/path/</span><span class="n">to</span><span class="o">/</span><span class="n">xtuple</span>
+<span class="err">$</span> <span class="o">.</span><span class="n">/scripts</span><span class="o">/</span><span class="n">build_app</span><span class="o">.</span><span class="n">js</span> <span class="o">-</span><span class="n">d</span> <span class="n">dev</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span><span class="n">.</span><span class="o">/</span><span class="n">xtuple</span><span class="o">-</span><span class="n">extensions</span><span class="o">/</span><span class="n">source</span><span class="o">/</span><span class="n">sip_account</span>
+<span class="err">$</span> <span class="n">psql</span> <span class="o">-</span><span class="n">U</span> <span class="n">admin</span> <span class="o">-</span><span class="n">d</span> <span class="n">dev</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;select * from xt.ext;&quot;</span></code></pre></div>
+
+<p>That last command should display a table with a list of extensions; the ones already in xtuple like ‘crm’ and ‘billing’ and some others plus your new extension, in this case ‘sip_account’. When you run 
+&lt;div class="highlight"&gt;&lt;pre&gt;<code class="language-ruby" data-lang="ruby"><span class="err">$</span> <span class="o">.</span><span class="n">/scripts</span><span class="o">/</span><span class="n">build_app</span><span class="o">.</span><span class="n">js</span> <span class="o">-</span><span class="n">d</span> <span class="n">dev</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span><span class="n">.</span><span class="o">/</span><span class="n">xtuple</span><span class="o">-</span><span class="n">extensions</span><span class="o">/</span><span class="n">source</span><span class="o">/</span><span class="n">sip_account</span></code>&lt;/pre&gt;&lt;/div&gt;
+ you’ll probably see a message along the lines of “<extension name=""> has no client code, not building client code" and that's fine because yeah, we haven't worked on the client code yet.</extension></p>
+
+<p><strong>ORM</strong>
+Here’s where things start getting different. So ORMs link your object to an SQL table. But we DON’T want to make a <em>new</em> business object, we want to extend an <em>existing</em> business object, so the ORM we will make will be a little different than the xTuple tutorial. <a href="https://github.com/shackbarth">Steve Hackbarth</a> kindly explained this new business object/existing business object ORM concept <a href="https://github.com/xtuple/xtuple/issues/1685">here</a>. </p>
+
+<p>First we’ll create the directory 
+&lt;div class="highlight"&gt;&lt;pre&gt;<code class="language-ruby" data-lang="ruby"><span class="sr">/path/</span><span class="n">to</span><span class="o">/</span><span class="n">xtuple</span><span class="o">-</span><span class="n">extensions</span><span class="o">/</span><span class="n">source</span><span class="o">/</span><span class="n">sip_account</span><span class="o">/</span><span class="n">database</span><span class="o">/</span><span class="n">orm</span><span class="o">/</span><span class="n">ext</span></code>&lt;/pre&gt;&lt;/div&gt;
+, according to xTuple convention. ORMS for new business objects would be put in 
+&lt;div class="highlight"&gt;&lt;pre&gt;<code class="language-ruby" data-lang="ruby"><span class="sr">/path/</span><span class="n">to</span><span class="o">/</span><span class="n">xtuple</span><span class="o">-</span><span class="n">extensions</span><span class="o">/</span><span class="n">source</span><span class="o">/</span><span class="n">sip_account</span><span class="o">/</span><span class="n">database</span><span class="o">/</span><span class="n">orm</span><span class="o">/</span><span class="n">models</span></code>&lt;/pre&gt;&lt;/div&gt;
+. Now we’ll create the .json file 
+&lt;div class="highlight"&gt;&lt;pre&gt;<code class="language-ruby" data-lang="ruby"><span class="sr">/path/</span><span class="n">to</span><span class="o">/</span><span class="n">xtuple</span><span class="o">-</span><span class="n">extensions</span><span class="o">/</span><span class="n">source</span><span class="o">/</span><span class="n">sip_account</span><span class="o">/</span><span class="n">database</span><span class="o">/</span><span class="n">orm</span><span class="o">/</span><span class="n">ext</span><span class="o">/</span><span class="n">user_account</span><span class="o">.</span><span class="n">jscon</span></code>&lt;/pre&gt;&lt;/div&gt;
+ for our ORM. Once again, don’t quote me on this, but I think the name of the file should be the name of the business object you are extending, as is done in the <a href="https://github.com/xtuple/xtuple-extensions/blob/master/sample/icecream/database/orm/ext/contact.json">turorial example extending the Contact object</a>. In our case, UserAccount is defined in user_account.json and that’s what I named my extension ORM too.
+Here’s what you should place in it:</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="o">[</span>
+  <span class="p">{</span>
+    <span class="s2">&quot;context&quot;</span><span class="p">:</span> <span class="s2">&quot;sip_account&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;nameSpace&quot;</span><span class="p">:</span> <span class="s2">&quot;XM&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;UserAccount&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;table&quot;</span><span class="p">:</span> <span class="s2">&quot;sa.usrlitesip&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;isExtension&quot;</span><span class="p">:</span> <span class="kp">true</span><span class="p">,</span>
+    <span class="s2">&quot;isChild&quot;</span><span class="p">:</span> <span class="kp">false</span><span class="p">,</span>
+    <span class="s2">&quot;comment&quot;</span><span class="p">:</span> <span class="s2">&quot;Extended by Sip&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;relations&quot;</span><span class="p">:</span> <span class="o">[</span>
+      <span class="p">{</span>
+        <span class="s2">&quot;column&quot;</span><span class="p">:</span> <span class="s2">&quot;usrlitesip_usr_username&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;inverse&quot;</span><span class="p">:</span> <span class="s2">&quot;username&quot;</span>
+      <span class="p">}</span>
+    <span class="o">]</span><span class="p">,</span>
+    <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="o">[</span>
+      <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;uri&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;attr&quot;</span><span class="p">:</span> <span class="p">{</span>
+          <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;column&quot;</span><span class="p">:</span> <span class="s2">&quot;usrlitesip_uri&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;isNaturalKey&quot;</span><span class="p">:</span> <span class="kp">true</span>
+        <span class="p">}</span>
+      <span class="p">},</span>
+      <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;displayName&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;attr&quot;</span><span class="p">:</span> <span class="p">{</span>
+          <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;column&quot;</span><span class="p">:</span> <span class="s2">&quot;usrlitesip_name&quot;</span>
+        <span class="p">}</span>
+      <span class="p">},</span>
+      <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;sipPassword&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;attr&quot;</span><span class="p">:</span> <span class="p">{</span>
+          <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;column&quot;</span><span class="p">:</span> <span class="s2">&quot;usrlitesip_password&quot;</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="o">]</span><span class="p">,</span>
+    <span class="s2">&quot;isSystem&quot;</span><span class="p">:</span> <span class="kp">true</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="s2">&quot;context&quot;</span><span class="p">:</span> <span class="s2">&quot;sip_account&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;nameSpace&quot;</span><span class="p">:</span> <span class="s2">&quot;XM&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;UserAccountRelation&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;table&quot;</span><span class="p">:</span> <span class="s2">&quot;sa.usrlitesip&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;isExtension&quot;</span><span class="p">:</span> <span class="kp">true</span><span class="p">,</span>
+    <span class="s2">&quot;isChild&quot;</span><span class="p">:</span> <span class="kp">false</span><span class="p">,</span>
+    <span class="s2">&quot;comment&quot;</span><span class="p">:</span> <span class="s2">&quot;Extended by Sip&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;relations&quot;</span><span class="p">:</span> <span class="o">[</span>
+      <span class="p">{</span>
+        <span class="s2">&quot;column&quot;</span><span class="p">:</span> <span class="s2">&quot;usrlitesip_usr_username&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;inverse&quot;</span><span class="p">:</span> <span class="s2">&quot;username&quot;</span>
+      <span class="p">}</span>
+    <span class="o">]</span><span class="p">,</span>
+    <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="o">[</span>
+      <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;uri&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;attr&quot;</span><span class="p">:</span> <span class="p">{</span>
+          <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;column&quot;</span><span class="p">:</span> <span class="s2">&quot;usrlitesip_uri&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;isNaturalKey&quot;</span><span class="p">:</span> <span class="kp">true</span>
+        <span class="p">}</span>
+      <span class="p">},</span>
+      <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;displayName&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;attr&quot;</span><span class="p">:</span> <span class="p">{</span>
+          <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;column&quot;</span><span class="p">:</span> <span class="s2">&quot;usrlitesip_name&quot;</span>
+        <span class="p">}</span>
+      <span class="p">},</span>
+      <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;sipPassword&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;attr&quot;</span><span class="p">:</span> <span class="p">{</span>
+          <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;String&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;column&quot;</span><span class="p">:</span> <span class="s2">&quot;usrlitesip_password&quot;</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="o">]</span><span class="p">,</span>
+    <span class="s2">&quot;isSystem&quot;</span><span class="p">:</span> <span class="kp">true</span>
+  <span class="p">}</span>
+<span class="o">]</span></code></pre></div>
+
+<p>Note the “context” is my extension name, because the context + nameSpace + type combo has to be unique. We already have a UserAccount and UserAccountRelation object in the “XM” namespace in the “xtuple” context in the original <a href="https://github.com/xtuple/xtuple/blob/master/enyo-client/database/orm/models/user_account.json#L310">user_account.json</a>, now we will have a UserAccount and UserAccountRelation object in the “XM” namespace in the “sip_account” conext. What else is important? Node that “isExtension” is <strong>true</strong> on lines 7 and 47 and the “relations” item contains the “column” of the foreign key we referenced. </p>
+
+<p>This is something you might want to verify: “column” (lines 12 and 52) is the name of the attribute on <em>your</em> table. When we made a reference to the primary key usr_usrname from the xt.usrlite table we named that column usrlitesip_usr_usrname. But the “inverse” is not the .sql name but rather the attribute name associated with the original sql table in the original ORM. Did I lose you? I had a lot of trouble with this silly thing. In the original ORM that created a new UserAccount business object, the primary key attribute is named “username”, as can be seen <a href="https://github.com/xtuple/xtuple/blob/master/enyo-client/database/orm/models/user_account.json#L326-331">here</a>. That is what should be used for the “inverse” value. Not the sql column name (usr_username) but the object attribute name (username). I’m emphasizing this because I made that mistake and if I can spare you the pain I will.</p>
+
+<p>If we rebuild our extension everything should come along nicely, but you won’t see any changes just yet in the web app because we haven’t created the client code.</p>
+
+<p><strong>Client</strong>
+Create the directory 
+&lt;div class="highlight"&gt;&lt;pre&gt;<code class="language-ruby" data-lang="ruby"><span class="sr">/path/</span><span class="n">to</span><span class="o">/</span><span class="n">xtuple</span><span class="o">-</span><span class="n">extensions</span><span class="o">/</span><span class="n">source</span><span class="o">/</span><span class="n">sip_account</span><span class="o">/</span><span class="n">client</span></code>&lt;/pre&gt;&lt;/div&gt;
+ which is where we’ll keep all the client code. I want the fields I added to show up on the form to create a new User Account, so I need to extend the view for the User Account workspace. I’ll start by creating a directory 
+&lt;div class="highlight"&gt;&lt;pre&gt;<code class="language-ruby" data-lang="ruby"><span class="sr">/path/</span><span class="n">to</span><span class="o">/</span><span class="n">xtuple</span><span class="o">-</span><span class="n">extensions</span><span class="o">/</span><span class="n">source</span><span class="o">/</span><span class="n">sip_account</span><span class="o">/</span><span class="n">client</span><span class="o">/</span><span class="n">views</span></code>&lt;/pre&gt;&lt;/div&gt;
+ and in it creating a file named ‘workspace.js’ containing this code:</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="no">XT</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">sip_account</span><span class="o">.</span><span class="n">initWorkspace</span> <span class="o">=</span> <span class="n">function</span> <span class="p">()</span> <span class="p">{</span>
+
+	<span class="n">var</span> <span class="n">extensions</span> <span class="o">=</span> <span class="o">[</span>
+  		<span class="p">{</span><span class="ss">kind</span><span class="p">:</span> <span class="s2">&quot;onyx.GroupboxHeader&quot;</span><span class="p">,</span> <span class="ss">container</span><span class="p">:</span> <span class="s2">&quot;mainGroup&quot;</span><span class="p">,</span> <span class="ss">content</span><span class="p">:</span> <span class="s2">&quot;_sipAccount&quot;</span><span class="o">.</span><span class="n">loc</span><span class="p">()},</span>
+  		<span class="p">{</span><span class="ss">kind</span><span class="p">:</span> <span class="s2">&quot;XV.InputWidget&quot;</span><span class="p">,</span> <span class="ss">container</span><span class="p">:</span> <span class="s2">&quot;mainGroup&quot;</span><span class="p">,</span> <span class="kp">attr</span><span class="p">:</span> <span class="s2">&quot;uri&quot;</span> <span class="p">},</span>
+  		<span class="p">{</span><span class="ss">kind</span><span class="p">:</span> <span class="s2">&quot;XV.InputWidget&quot;</span><span class="p">,</span> <span class="ss">container</span><span class="p">:</span> <span class="s2">&quot;mainGroup&quot;</span><span class="p">,</span> <span class="kp">attr</span><span class="p">:</span> <span class="s2">&quot;displayName&quot;</span> <span class="p">},</span>
+  		<span class="p">{</span><span class="ss">kind</span><span class="p">:</span> <span class="s2">&quot;XV.InputWidget&quot;</span><span class="p">,</span> <span class="ss">container</span><span class="p">:</span> <span class="s2">&quot;mainGroup&quot;</span><span class="p">,</span> <span class="ss">type</span><span class="p">:</span><span class="s2">&quot;password&quot;</span><span class="p">,</span> <span class="kp">attr</span><span class="p">:</span> <span class="s2">&quot;sipPassword&quot;</span> <span class="p">}</span>
+	<span class="o">]</span><span class="p">;</span>
+
+	<span class="no">XV</span><span class="o">.</span><span class="n">appendExtension</span><span class="p">(</span><span class="s2">&quot;XV.UserAccountWorkspace&quot;</span><span class="p">,</span> <span class="n">extensions</span><span class="p">);</span>
+<span class="p">};</span></code></pre></div>
+
+<p>So I’m initializing my workspace and creating an array of items to add (append) to view XV.UserAccountWorkspace. The first ‘item’ is this onyx.GroupboxHeader which is a pretty divider for my new items, the kind you find in the web app at Setup &gt; User Accounts, like ‘Overview’. I have no idea what other options there are for container other than “mainGroup”, so let’s stick to that. I’ll explain 
+&lt;div class="highlight"&gt;&lt;pre&gt;<code class="language-ruby" data-lang="ruby"><span class="ss">content</span><span class="p">:</span> <span class="s2">&quot;_sipAccount&quot;</span><span class="o">.</span><span class="n">loc</span><span class="p">()</span></code>&lt;/pre&gt;&lt;/div&gt;
+ in a bit. Next I created three input fields of the XV.InputWidget kind. This also confused me a bit as there are different kinds of input to be used, like dropdowns and checkboxes. The only advice I can give is snoop around the webapp, find an input you like and look up the corresponding workspace.js file to see what was used. </p>
+
+<p>What we just did is (should be) enough for the new fields to show up on the User Account form. But before we see things change, we have to package the client. Create the file 
+&lt;div class="highlight"&gt;&lt;pre&gt;<code class="language-ruby" data-lang="ruby"><span class="sr">/path/</span><span class="n">to</span><span class="o">/</span><span class="n">xtuple</span><span class="o">-</span><span class="n">extensions</span><span class="o">/</span><span class="n">source</span><span class="o">/</span><span class="n">sip_account</span><span class="o">/</span><span class="n">client</span><span class="o">/</span><span class="n">views</span><span class="o">/</span><span class="n">package</span><span class="o">.</span><span class="n">js</span></code>&lt;/pre&gt;&lt;/div&gt;
+. This file is needed to ‘package’ groups of files and indicates the order the files should be loaded (for more on that, see <a href="https://github.com/enyojs/enyo/wiki/Tutorial#you-got-to-keep-it-separated">this</a>). For now, all the file will contain is:</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">enyo</span><span class="o">.</span><span class="n">depends</span><span class="p">(</span>
+	<span class="s2">&quot;workspace.js&quot;</span>
+<span class="p">);</span></code></pre></div>
+
+<p>You also need to package the ‘views’ directory containing workspace, so create the file Create the file 
+&lt;div class="highlight"&gt;&lt;pre&gt;<code class="language-ruby" data-lang="ruby"><span class="sr">/path/</span><span class="n">to</span><span class="o">/</span><span class="n">xtuple</span><span class="o">-</span><span class="n">extensions</span><span class="o">/</span><span class="n">source</span><span class="o">/</span><span class="n">sip_account</span><span class="o">/</span><span class="n">client</span><span class="o">/</span><span class="n">package</span><span class="o">.</span><span class="n">js</span></code>&lt;/pre&gt;&lt;/div&gt;
+ and in it show that the directory ‘views’ and its contents must be part of the higher level package:</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">enyo</span><span class="o">.</span><span class="n">depends</span><span class="p">(</span>
+	<span class="s2">&quot;views&quot;</span>
+<span class="p">);</span></code></pre></div>
+
+<p>I like to think of it as a box full of smaller boxes.</p>
+
+<p>This will sound terrible, but apparently you also need to create the file 
+&lt;div class="highlight"&gt;&lt;pre&gt;<code class="language-ruby" data-lang="ruby"><span class="sr">/path/</span><span class="n">to</span><span class="o">/</span><span class="n">xtuple</span><span class="o">-</span><span class="n">extensions</span><span class="o">/</span><span class="n">source</span><span class="o">/</span><span class="n">sip_account</span><span class="o">/</span><span class="n">client</span><span class="o">/</span><span class="n">core</span><span class="o">.</span><span class="n">js</span></code>&lt;/pre&gt;&lt;/div&gt;
+ containing this line:</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="no">XT</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">icecream</span> <span class="o">=</span> <span class="p">{};</span></code></pre></div>
+
+<p>I don’t know why. As soon as I find out I’ll be sure to inform you.</p>
+
+<p>As we’ve added a file to the client directory, be sure to update<br />
+&lt;div class="highlight"&gt;&lt;pre&gt;<code class="language-ruby" data-lang="ruby"><span class="sr">/path/</span><span class="n">to</span><span class="o">/</span><span class="n">xtuple</span><span class="o">-</span><span class="n">extensions</span><span class="o">/</span><span class="n">source</span><span class="o">/</span><span class="n">sip_account</span><span class="o">/</span><span class="n">client</span><span class="o">/</span><span class="n">package</span><span class="o">.</span><span class="n">js</span></code>&lt;/pre&gt;&lt;/div&gt;
+ so it included the new file:</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">enyo</span><span class="o">.</span><span class="n">depends</span><span class="p">(</span>
+    <span class="s2">&quot;core.js&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;views&quot;</span>
+<span class="p">);</span></code></pre></div>
+
+<p><strong>Translations</strong> 
+Remember ““_sipAccount”.loc()” in our workspace.js file? xTuple has great internationalization support and it’s easy to use. Just create the directory and file 
+&lt;div class="highlight"&gt;&lt;pre&gt;<code class="language-ruby" data-lang="ruby"><span class="sr">/path/</span><span class="n">to</span><span class="o">/</span><span class="n">xtuple</span><span class="o">-</span><span class="n">extensions</span><span class="o">/</span><span class="n">source</span><span class="o">/</span><span class="n">sip_account</span><span class="o">/</span><span class="n">client</span><span class="o">/</span><span class="n">en</span><span class="o">/</span><span class="n">strings</span><span class="o">.</span><span class="n">js</span></code>&lt;/pre&gt;&lt;/div&gt;
+ and in it put key-value pairs for labels and their translation, like this:</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="p">(</span><span class="n">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
+
+  <span class="n">var</span> <span class="n">lang</span> <span class="o">=</span> <span class="no">XT</span><span class="o">.</span><span class="n">stringsFor</span><span class="p">(</span><span class="s2">&quot;en_US&quot;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="s2">&quot;_sipAccount&quot;</span><span class="p">:</span> <span class="s2">&quot;Sip Account&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;_uri&quot;</span><span class="p">:</span> <span class="s2">&quot;Sip URI&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;_displayName&quot;</span><span class="p">:</span> <span class="s2">&quot;Display Name&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;_sipPassword&quot;</span><span class="p">:</span> <span class="s2">&quot;Password&quot;</span>
+  <span class="p">});</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="n">typeof</span> <span class="n">exports</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">exports</span><span class="o">.</span><span class="n">language</span> <span class="o">=</span> <span class="n">lang</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}());</span></code></pre></div>
+
+<p>So far I included all the labels I used in my Sip Account form. If you write the wrong label (key) or forget to include a corresponding key-value pair in strings.js, xTuple will simply name your lable “_labelName”, underscore and all. </p>
+
+<p>Now build your extension and start up the server:</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="err">$</span> <span class="n">cd</span> <span class="sr">/path/</span><span class="n">to</span><span class="o">/</span><span class="n">xtuple</span> 
+<span class="err">$</span> <span class="o">.</span><span class="n">/scripts</span><span class="o">/</span><span class="n">build_app</span><span class="o">.</span><span class="n">js</span> <span class="o">-</span><span class="n">d</span> <span class="n">dev</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span><span class="n">.</span><span class="o">/</span><span class="n">xtuple</span><span class="o">-</span><span class="n">extensions</span><span class="o">/</span><span class="n">source</span><span class="o">/</span><span class="n">sip_account</span>
+<span class="err">$</span> <span class="n">node</span> <span class="n">node</span><span class="o">-</span><span class="n">datasource</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">js</span></code></pre></div>
+
+<p>If the server is already running, just stop it and restart it to reflect your changes. </p>
+
+<p>Now if you go to Setup &gt; User Accounts and click the “+” button, you should see a nice little addition to the form with a ‘Sip Account’ divider and three new fields. Nice, eh?</p>
+
+
+  </article>
+
+</div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrap">
+
+    <h2 class="footer-heading">Juliana Louback, software dev.</h2>
+
+    <div class="footer-col-1 column">
+      <ul>
+        <li>Juliana Louback, software dev.</li>
+        <li><a href="mailto:juliana.m.louback@gmail.com">juliana.m.louback@gmail.com</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col-2 column">
+      <ul>
+        <li>
+          <a href="https://github.com/jlouback">
+            <span class="icon github">
+              <svg version="1.1" class="github-icon-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                 viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+                <path fill-rule="evenodd" clip-rule="evenodd" fill="#C2C2C2" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761
+                c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32
+                c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472
+                c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037
+                C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65
+                c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261
+                c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082
+                c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129
+                c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/>
+              </svg>
+            </span>
+            <span class="username">jlouback</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://twitter.com/mslouback">
+            <span class="icon twitter">
+              <svg version="1.1" class="twitter-icon-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                 viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+                <path fill="#C2C2C2" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809
+                c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27
+                c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767
+                c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206
+                C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271
+                c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469
+                c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/>
+              </svg>
+            </span>
+            <span class="username">mslouback</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="footer-col-3 column">
+      <p class="text">An informal account of my adventures in coding, including scattered moments of genius as well as my more common stupidities. I intend to cover a variety of themes, the current trend is WebRTC.</p>
+    </div>
+
+  </div>
+
+</footer>
+
+
+    </body>
+</html>
