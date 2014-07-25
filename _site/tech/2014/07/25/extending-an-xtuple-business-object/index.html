@@ -258,8 +258,12 @@ Here’s what you should place in it:</p>
 
 <p>If we rebuild our extension everything should come along nicely, but you won’t see any changes just yet in the web app because we haven’t created the client code.</p>
 
-<p><strong>Client</strong>
-Create the directory <strong>/path/to/xtuple-extensions/source/sip_account/client</strong> which is where we’ll keep all the client code. I want the fields I added to show up on the form to create a new User Account, so I need to extend the view for the User Account workspace. I’ll start by creating a directory <strong>/path/to/xtuple-extensions/source/sip_account/client/views</strong> and in it creating a file named ‘workspace.js’ containing this code:</p>
+<p><strong>Client</strong></p>
+
+<p>Create the directory <strong>/path/to/xtuple-extensions/source/sip_account/client</strong> which is where we’ll keep all the client code. </p>
+
+<p><strong>Extend Workspace View</strong>
+I want the fields I added to show up on the form to create a new User Account, so I need to extend the view for the User Account workspace. I’ll start by creating a directory <strong>/path/to/xtuple-extensions/source/sip_account/client/views</strong> and in it creating a file named ‘workspace.js’ containing this code:</p>
 
 <div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">XT</span><span class="p">.</span><span class="nx">extensions</span><span class="p">.</span><span class="nx">sip_account</span><span class="p">.</span><span class="nx">initWorkspace</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
 
@@ -332,6 +336,95 @@ Create the directory <strong>/path/to/xtuple-extensions/source/sip_account/clien
 <p>If the server is already running, just stop it and restart it to reflect your changes. </p>
 
 <p>Now if you go to Setup &gt; User Accounts and click the “+” button, you should see a nice little addition to the form with a ‘Sip Account’ divider and three new fields. Nice, eh?</p>
+
+<p><strong>Extend Parameters</strong></p>
+
+<p>Currently you can search your User Accounts list using any of the User Account fields. It would be nice to be able to search with the Sip account fields we added as well. To do that, let’s create the directory <strong>/path/to/xtuple-extensions/source/sip_account/client/widgets</strong> and there create the file <strong>parameter.js</strong> to extend XV.UserAccountListParameters. One again, you’ll have to look this up. In the <em>xTuple</em> code you’ll find the application’s <strong>parameter.js</strong> in <a href="https://github.com/xtuple/xtuple/tree/master/enyo-client/application/source/widgets">/path/to/xtuple/enyo-client/application/source/widgets</a>. Search for the business object you are extending (for example, XV.UserAccount) and look for some combination of the business object name and ‘Parameters’. If there’s  more than one, try different ones. Not a very refined method, but it worked for me.
+Here’s the content of our <strong>parameter.js</strong>:</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">XT</span><span class="p">.</span><span class="nx">extensions</span><span class="p">.</span><span class="nx">sip_account</span><span class="p">.</span><span class="nx">initParameterWidget</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+
+  <span class="kd">var</span> <span class="nx">extensions</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="nx">kind</span><span class="o">:</span> <span class="s2">&quot;onyx.GroupboxHeader&quot;</span><span class="p">,</span> <span class="nx">content</span><span class="o">:</span> <span class="s2">&quot;_sipAccount&quot;</span><span class="p">.</span><span class="nx">loc</span><span class="p">()},</span>
+    <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;uri&quot;</span><span class="p">,</span> <span class="nx">label</span><span class="o">:</span> <span class="s2">&quot;_uri&quot;</span><span class="p">.</span><span class="nx">loc</span><span class="p">(),</span> <span class="nx">attr</span><span class="o">:</span> <span class="s2">&quot;uri&quot;</span><span class="p">,</span> <span class="nx">defaultKind</span><span class="o">:</span> <span class="s2">&quot;XV.InputWidget&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;displayName&quot;</span><span class="p">,</span> <span class="nx">label</span><span class="o">:</span> <span class="s2">&quot;_displayName&quot;</span><span class="p">.</span><span class="nx">loc</span><span class="p">(),</span> <span class="nx">attr</span><span class="o">:</span> <span class="s2">&quot;displayName&quot;</span><span class="p">,</span> <span class="nx">defaultKind</span><span class="o">:</span> <span class="s2">&quot;XV.InputWidget&quot;</span><span class="p">}</span>
+  <span class="p">];</span>
+
+  <span class="nx">XV</span><span class="p">.</span><span class="nx">appendExtension</span><span class="p">(</span><span class="s2">&quot;XV.UserAccountListParameters&quot;</span><span class="p">,</span> <span class="nx">extensions</span><span class="p">);</span>
+<span class="p">};</span></code></pre></div>
+
+<p>Node that I didn’t include a search field for the password attribute for obvious reasons. Now once again, we package this new code addition by creating a <strong>/path/to/xtuple-extensions/source/sip_account/client/widgets/package.js</strong> file:</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">enyo</span><span class="p">.</span><span class="nx">depends</span><span class="p">(</span>
+<span class="s2">&quot;parameter.js&quot;</span>
+<span class="p">);</span></code></pre></div>
+
+<p>We also have to update <strong>/path/to/xtuple-extensions/source/sip_account/client/package.js</strong>:  </p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">enyo</span><span class="p">.</span><span class="nx">depends</span><span class="p">(</span>
+<span class="s2">&quot;core.js&quot;</span><span class="p">,</span>
+<span class="s2">&quot;widgets&quot;</span>
+<span class="s2">&quot;views&quot;</span>
+<span class="p">);</span></code></pre></div>
+
+<p>Rebuild the extension (and restart the server) and go to Setup &gt; User Accounts. Press the magnifying glass button on the upper left side of the screen and you’ll see many options for filtering the User Accounts, among them the SIP Uri and Display Name.</p>
+
+<p><strong>Extend List View</strong></p>
+
+<p>You might want your new fields to show up on the list of User Accounts. I figured out a way to do this that looks strange and kind of incorrect, but it’s apparently working. </p>
+
+<p>Create the file <strong>/path/to/xtuple-extensions/source/sip_account/client/views/list.js</strong> and add the following:</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">enyo</span><span class="p">.</span><span class="nx">kind</span><span class="p">({</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;XV.UserAccountList&quot;</span><span class="p">,</span>
+    <span class="nx">kind</span><span class="o">:</span> <span class="s2">&quot;XV.List&quot;</span><span class="p">,</span>
+    <span class="nx">label</span><span class="o">:</span> <span class="s2">&quot;_userAccounts&quot;</span><span class="p">.</span><span class="nx">loc</span><span class="p">(),</span>
+    <span class="nx">collection</span><span class="o">:</span> <span class="s2">&quot;XM.UserAccountRelationCollection&quot;</span><span class="p">,</span>
+    <span class="nx">parameterWidget</span><span class="o">:</span> <span class="s2">&quot;XV.UserAccountListParameters&quot;</span><span class="p">,</span>
+    <span class="nx">query</span><span class="o">:</span> <span class="p">{</span><span class="nx">orderBy</span><span class="o">:</span> <span class="p">[</span>
+      <span class="p">{</span><span class="nx">attribute</span><span class="o">:</span> <span class="s1">&#39;username&#39;</span><span class="p">}</span>
+    <span class="p">]},</span>
+    <span class="nx">components</span><span class="o">:</span> <span class="p">[</span>
+      <span class="p">{</span><span class="nx">kind</span><span class="o">:</span> <span class="s2">&quot;XV.ListItem&quot;</span><span class="p">,</span> <span class="nx">components</span><span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="nx">kind</span><span class="o">:</span> <span class="s2">&quot;FittableColumns&quot;</span><span class="p">,</span> <span class="nx">components</span><span class="o">:</span> <span class="p">[</span>
+          <span class="p">{</span><span class="nx">kind</span><span class="o">:</span> <span class="s2">&quot;XV.ListColumn&quot;</span><span class="p">,</span> <span class="nx">classes</span><span class="o">:</span> <span class="s2">&quot;short&quot;</span><span class="p">,</span> <span class="nx">components</span><span class="o">:</span> <span class="p">[</span>
+            <span class="p">{</span><span class="nx">kind</span><span class="o">:</span> <span class="s2">&quot;XV.ListAttr&quot;</span><span class="p">,</span> <span class="nx">attr</span><span class="o">:</span> <span class="s2">&quot;username&quot;</span><span class="p">,</span> <span class="nx">isKey</span><span class="o">:</span> <span class="kc">true</span><span class="p">}</span>
+          <span class="p">]},</span>
+          <span class="p">{</span><span class="nx">kind</span><span class="o">:</span> <span class="s2">&quot;XV.ListColumn&quot;</span><span class="p">,</span> <span class="nx">classes</span><span class="o">:</span> <span class="s2">&quot;short&quot;</span><span class="p">,</span> <span class="nx">components</span><span class="o">:</span> <span class="p">[</span>
+            <span class="p">{</span><span class="nx">kind</span><span class="o">:</span> <span class="s2">&quot;XV.ListAttr&quot;</span><span class="p">,</span> <span class="nx">attr</span><span class="o">:</span> <span class="s2">&quot;propername&quot;</span><span class="p">}</span>
+          <span class="p">]},</span>
+          <span class="p">{</span><span class="nx">kind</span><span class="o">:</span> <span class="s2">&quot;XV.ListColumn&quot;</span><span class="p">,</span> <span class="nx">classes</span><span class="o">:</span> <span class="s2">&quot;last&quot;</span><span class="p">,</span> <span class="nx">components</span><span class="o">:</span> <span class="p">[</span>
+            <span class="p">{</span><span class="nx">kind</span><span class="o">:</span> <span class="s2">&quot;XV.ListAttr&quot;</span><span class="p">,</span> <span class="nx">attr</span><span class="o">:</span> <span class="s2">&quot;uri&quot;</span><span class="p">}</span>
+          <span class="p">]}</span>
+        <span class="p">]}</span>
+      <span class="p">]}</span>
+    <span class="p">]</span>
+  <span class="p">});</span>
+  
+  <span class="nx">XV</span><span class="p">.</span><span class="nx">registerModelList</span><span class="p">(</span><span class="s2">&quot;XM.UserAccountRelation&quot;</span><span class="p">,</span> <span class="s2">&quot;XV.UserAccountList&quot;</span><span class="p">);</span></code></pre></div>
+
+<p>This is actually what’s in <a href="https://github.com/xtuple/xtuple/blob/master/enyo-client/application/source/views/list.js#L2512-L2535">/path/to/xtuple/enyo-client/application/source/views/list.js</a> – the entire highlighted part. All I did was add this to “components” after line 18:</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">{</span><span class="nx">kind</span><span class="o">:</span> <span class="s2">&quot;XV.ListColumn&quot;</span><span class="p">,</span> <span class="nx">classes</span><span class="o">:</span> <span class="s2">&quot;last&quot;</span><span class="p">,</span> <span class="nx">components</span><span class="o">:</span> <span class="p">[</span>
+    <span class="p">{</span><span class="nx">kind</span><span class="o">:</span> <span class="s2">&quot;XV.ListAttr&quot;</span><span class="p">,</span> <span class="nx">attr</span><span class="o">:</span> <span class="s2">&quot;uri&quot;</span><span class="p">}</span>
+  <span class="p">]}</span></code></pre></div>
+
+<p>I found this at random after a lot of trial and error. It’s strange because if you encapsulate that code with </p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">XT</span><span class="p">.</span><span class="nx">extensions</span><span class="p">.</span><span class="nx">sip_account</span><span class="p">.</span><span class="nx">initList</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+ <span class="c1">//Code here</span>
+<span class="p">};</span></code></pre></div>
+
+<p>as is done with <strong>parameter.js</strong> and <strong>workspace.js</strong> (and in the xTuple tutorial you are supposed to do that with a new business object), it doesn’t work. I have no idea why. This might be ‘wrong’ or against xTuple coding norms; I will find out and update this post ASAP. But it <em>does</em> work this way. * shrugs *</p>
+
+<p>That said, as we’ve created the <strong>list.js</strong> file, we need to ad it to our package by editing <strong>/path/to/xtuple-extensions/source/sip_account/client/views/package.js</strong>:</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">enyo</span><span class="p">.</span><span class="nx">depends</span><span class="p">(</span>
+<span class="s2">&quot;list.js&quot;</span><span class="p">,</span>
+<span class="s2">&quot;workspace.js&quot;</span>
+<span class="p">);</span></code></pre></div>
+
+<p>That’s all. Rebuild the app and restart your server and when you select Setup &gt; User Accounts in the web app you should see the Sip URI displayed on the User Accounts that have the Sip Account data. Add a new User Account to try this out.</p>
 
 
   </article>

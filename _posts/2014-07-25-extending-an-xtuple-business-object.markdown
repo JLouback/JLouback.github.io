@@ -347,5 +347,65 @@ You might want your new fields to show up on the list of User Accounts. I figure
 
 Create the file **/path/to/xtuple-extensions/source/sip_account/client/views/list.js** and add the following:
 
+{% highlight js lineos %}
+enyo.kind({
+    name: "XV.UserAccountList",
+    kind: "XV.List",
+    label: "_userAccounts".loc(),
+    collection: "XM.UserAccountRelationCollection",
+    parameterWidget: "XV.UserAccountListParameters",
+    query: {orderBy: [
+      {attribute: 'username'}
+    ]},
+    components: [
+      {kind: "XV.ListItem", components: [
+        {kind: "FittableColumns", components: [
+          {kind: "XV.ListColumn", classes: "short", components: [
+            {kind: "XV.ListAttr", attr: "username", isKey: true}
+          ]},
+          {kind: "XV.ListColumn", classes: "short", components: [
+            {kind: "XV.ListAttr", attr: "propername"}
+          ]},
+          {kind: "XV.ListColumn", classes: "last", components: [
+            {kind: "XV.ListAttr", attr: "uri"}
+          ]}
+        ]}
+      ]}
+    ]
+  });
+  
+  XV.registerModelList("XM.UserAccountRelation", "XV.UserAccountList");
+{% endhighlight %}
+
+This is actually what's in [/path/to/xtuple/enyo-client/application/source/views/list.js](https://github.com/xtuple/xtuple/blob/master/enyo-client/application/source/views/list.js#L2512-L2535) -- the entire highlighted part. All I did was add this to "components" after line 18:
+
+{% highlight js %}
+  {kind: "XV.ListColumn", classes: "last", components: [
+    {kind: "XV.ListAttr", attr: "uri"}
+  ]}
+{% endhighlight %}
+
+I found this at random after a lot of trial and error. It's strange because if you encapsulate that code with 
+{% highlight js %}
+XT.extensions.sip_account.initList = function () {
+ //Code here
+};
+{% endhighlight %}
+
+as is done with **parameter.js** and **workspace.js** (and in the xTuple tutorial you are supposed to do that with a new business object), it doesn't work. I have no idea why. This might be 'wrong' or against xTuple coding norms; I will find out and update this post ASAP. But it *does* work this way. * shrugs *
+
+That said, as we've created the **list.js** file, we need to ad it to our package by editing **/path/to/xtuple-extensions/source/sip_account/client/views/package.js**:
+
+{% highlight js %}
+enyo.depends(
+"list.js",
+"workspace.js"
+);
+{% endhighlight %}
+
+That's all. Rebuild the app and restart your server and when you select Setup > User Accounts in the web app you should see the Sip URI displayed on the User Accounts that have the Sip Account data. Add a new User Account to try this out.
+
+
+
 
 
