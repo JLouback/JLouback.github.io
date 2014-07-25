@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Extending an XTuple Business Object"
+title:  "Extending an xTuple Business Object"
 date:   2014-07-25 15:06:52
 categories: tech
 ---
