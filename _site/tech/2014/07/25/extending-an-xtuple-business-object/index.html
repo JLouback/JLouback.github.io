@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Extending an XTuple Business Object</title>
+    <title>Extending an xTuple Business Object</title>
     <meta name="viewport" content="width=device-width">
     <meta name="description" content="An informal account of my adventures in coding, including scattered moments of genius as well as my more common stupidities. I intend to cover a variety of themes, the current trend is WebRTC.">
     <link rel="canonical" href="http://julianalouback.com/tech/2014/07/25/extending-an-xtuple-business-object/">
@@ -56,7 +56,7 @@
       <div class="post">
 
   <header class="post-header">
-    <h1>Extending an XTuple Business Object</h1>
+    <h1>Extending an xTuple Business Object</h1>
     <p class="meta">Jul 25, 2014</p>
   </header>
 
@@ -86,7 +86,7 @@
 
 <p>So by now we should have the Vagrant Virtual Development Environment set up and the web app up and running and accessible at localhost:8443. So far so good.</p>
 
-<p><em>Disclaimer: You will note that much of this is similar to xTuple’s <a href="https://github.com/xtuple/xtuple-extensions/blob/master/docs/TUTORIAL.md">tutorial</a> but there are some small but important differences. Other Disclaimer: I’m describing how I did it, which may or may not be ‘up to snuff’. Works for me though.</em></p>
+<p><em>Disclaimer: You will note that much of this is similar - or rather, nearly identical - to xTuple’s <a href="https://github.com/xtuple/xtuple-extensions/blob/master/docs/TUTORIAL.md">tutorial</a> but there are some small but important differences and a few observations I think might be useful. Other Disclaimer: I’m describing how I did it, which may or may not be ‘up to snuff’. Works for me though.</em></p>
 
 <p><strong>Schema</strong></p>
 
@@ -371,45 +371,23 @@ Here’s the content of our <strong>parameter.js</strong>:</p>
 
 <p><strong>Extend List View</strong></p>
 
-<p>You might want your new fields to show up on the list of User Accounts. I figured out a way to do this that looks strange and kind of incorrect, but it’s apparently working. </p>
+<p>You might want your new fields to show up on the list of User Accounts. There’s a bit of an issue here because unlike what we did in <strong>workspace.js</strong> and <strong>parameter.js</strong>, we can’t append new things to the list of UserAccounts with the funciton <strong>XV.appendExtension(args)</strong>. First I tried overwriting the original UserAccountList, which works but it’s far from ideal as this could result in a loss of data from the core implementation. After some <a href="https://github.com/xtuple/xtuple/issues/1703#issuecomment-50115385">discussion with the xTuple dev community</a>, now there’s a better alternative:</p>
 
 <p>Create the file <strong>/path/to/xtuple-extensions/source/sip_account/client/views/list.js</strong> and add the following:</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">enyo</span><span class="p">.</span><span class="nx">kind</span><span class="p">({</span>
-    <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;XV.UserAccountList&quot;</span><span class="p">,</span>
-    <span class="nx">kind</span><span class="o">:</span> <span class="s2">&quot;XV.List&quot;</span><span class="p">,</span>
-    <span class="nx">label</span><span class="o">:</span> <span class="s2">&quot;_userAccounts&quot;</span><span class="p">.</span><span class="nx">loc</span><span class="p">(),</span>
-    <span class="nx">collection</span><span class="o">:</span> <span class="s2">&quot;XM.UserAccountRelationCollection&quot;</span><span class="p">,</span>
-    <span class="nx">parameterWidget</span><span class="o">:</span> <span class="s2">&quot;XV.UserAccountListParameters&quot;</span><span class="p">,</span>
-    <span class="nx">query</span><span class="o">:</span> <span class="p">{</span><span class="nx">orderBy</span><span class="o">:</span> <span class="p">[</span>
-      <span class="p">{</span><span class="nx">attribute</span><span class="o">:</span> <span class="s1">&#39;username&#39;</span><span class="p">}</span>
-    <span class="p">]},</span>
-    <span class="nx">components</span><span class="o">:</span> <span class="p">[</span>
-      <span class="p">{</span><span class="nx">kind</span><span class="o">:</span> <span class="s2">&quot;XV.ListItem&quot;</span><span class="p">,</span> <span class="nx">components</span><span class="o">:</span> <span class="p">[</span>
-        <span class="p">{</span><span class="nx">kind</span><span class="o">:</span> <span class="s2">&quot;FittableColumns&quot;</span><span class="p">,</span> <span class="nx">components</span><span class="o">:</span> <span class="p">[</span>
-          <span class="p">{</span><span class="nx">kind</span><span class="o">:</span> <span class="s2">&quot;XV.ListColumn&quot;</span><span class="p">,</span> <span class="nx">classes</span><span class="o">:</span> <span class="s2">&quot;short&quot;</span><span class="p">,</span> <span class="nx">components</span><span class="o">:</span> <span class="p">[</span>
-            <span class="p">{</span><span class="nx">kind</span><span class="o">:</span> <span class="s2">&quot;XV.ListAttr&quot;</span><span class="p">,</span> <span class="nx">attr</span><span class="o">:</span> <span class="s2">&quot;username&quot;</span><span class="p">,</span> <span class="nx">isKey</span><span class="o">:</span> <span class="kc">true</span><span class="p">}</span>
-          <span class="p">]},</span>
-          <span class="p">{</span><span class="nx">kind</span><span class="o">:</span> <span class="s2">&quot;XV.ListColumn&quot;</span><span class="p">,</span> <span class="nx">classes</span><span class="o">:</span> <span class="s2">&quot;short&quot;</span><span class="p">,</span> <span class="nx">components</span><span class="o">:</span> <span class="p">[</span>
-            <span class="p">{</span><span class="nx">kind</span><span class="o">:</span> <span class="s2">&quot;XV.ListAttr&quot;</span><span class="p">,</span> <span class="nx">attr</span><span class="o">:</span> <span class="s2">&quot;propername&quot;</span><span class="p">}</span>
-          <span class="p">]},</span>
-          <span class="p">{</span><span class="nx">kind</span><span class="o">:</span> <span class="s2">&quot;XV.ListColumn&quot;</span><span class="p">,</span> <span class="nx">classes</span><span class="o">:</span> <span class="s2">&quot;last&quot;</span><span class="p">,</span> <span class="nx">components</span><span class="o">:</span> <span class="p">[</span>
-            <span class="p">{</span><span class="nx">kind</span><span class="o">:</span> <span class="s2">&quot;XV.ListAttr&quot;</span><span class="p">,</span> <span class="nx">attr</span><span class="o">:</span> <span class="s2">&quot;uri&quot;</span><span class="p">}</span>
-          <span class="p">]}</span>
-        <span class="p">]}</span>
-      <span class="p">]}</span>
-    <span class="p">]</span>
-  <span class="p">});</span>
-  
-  <span class="nx">XV</span><span class="p">.</span><span class="nx">registerModelList</span><span class="p">(</span><span class="s2">&quot;XM.UserAccountRelation&quot;</span><span class="p">,</span> <span class="s2">&quot;XV.UserAccountList&quot;</span><span class="p">);</span></code></pre></div>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="lineno">1</span> <span class="kd">var</span> <span class="nx">oldUserAccountListCreate</span> <span class="o">=</span> <span class="nx">XV</span><span class="p">.</span><span class="nx">UserAccountList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">create</span><span class="p">;</span>
+<span class="lineno">2</span> 
+<span class="lineno">3</span> <span class="nx">XV</span><span class="p">.</span><span class="nx">UserAccountList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">create</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<span class="lineno">4</span>   <span class="nx">oldUserAccountListCreate</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+<span class="lineno">5</span>   <span class="k">this</span><span class="p">.</span><span class="nx">createComponent</span><span class="p">(</span>
+<span class="lineno">6</span>   <span class="p">{</span><span class="nx">kind</span><span class="o">:</span> <span class="s2">&quot;XV.ListColumn&quot;</span><span class="p">,</span> <span class="nx">container</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">$</span><span class="p">.</span><span class="nx">listItem</span><span class="p">,</span> <span class="nx">components</span><span class="o">:</span> <span class="p">[</span>
+<span class="lineno">7</span>        <span class="p">{</span><span class="nx">kind</span><span class="o">:</span> <span class="s2">&quot;XV.ListAttr&quot;</span><span class="p">,</span> <span class="nx">attr</span><span class="o">:</span> <span class="s2">&quot;uri&quot;</span><span class="p">}</span>
+<span class="lineno">8</span>    <span class="p">]})</span>
+<span class="lineno">9</span> <span class="p">};</span></code></pre></div>
 
-<p>This is actually what’s in <a href="https://github.com/xtuple/xtuple/blob/master/enyo-client/application/source/views/list.js#L2512-L2535">/path/to/xtuple/enyo-client/application/source/views/list.js</a> – the entire highlighted part. All I did was add this to “components” after line 18:</p>
+<p>To understand what I’m doing, check out the <strong>XV.UserAccountList</strong> implementation in <a href="https://github.com/xtuple/xtuple/blob/master/enyo-client/application/source/views/list.js#L2512-L2535">/path/to/xtuple/enyo-client/application/source/views/list.js</a> – the entire highlighted part. What we are doing is ‘extending’ XV.UserAccountList through ‘prototype-chaining’; this is how <a href="http://enyojs.com/docs/2.4.0/key-concepts/kinds.html">inheritance works with Enyo</a>. In line 1 we create a prototype and in line 4 we inherit the features including original components array which the list is based on. We then create an additional component immitating the setup shown in <strong>XV.UserAccountList</strong>: An <strong>XV.ListColumn</strong> containing an <strong>XV.ListAttr</strong>, which should be placed in the <strong>XV.ListItem</strong> components array as is done with the existing columns (refer to <a href="https://github.com/xtuple/xtuple/blob/master/enyo-client/application/source/views/list.js#L2512-L2535">implementation</a>). Components can or should (?) have <a href="http://enyojs.com/docs/2.4.0/key-concepts/components.html">names</a> which are used to access said components. You’d refer to a specific component by the <strong>this.$.componentName</strong> hash. The components in <strong>XV.UserAccountList</strong> don’t have names, so Enyo automatically names them (apparently) based on the <a href="http://enyojs.com/docs/2.4.0/key-concepts/kinds.html">kind name</a>, for example something of the kind <em>ListItem</em> is named <em>listItem</em>. I found this at random after a lot of trial and error and it’s not a bullet proof solution. Can be bettered.</p>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">{</span><span class="nx">kind</span><span class="o">:</span> <span class="s2">&quot;XV.ListColumn&quot;</span><span class="p">,</span> <span class="nx">classes</span><span class="o">:</span> <span class="s2">&quot;last&quot;</span><span class="p">,</span> <span class="nx">components</span><span class="o">:</span> <span class="p">[</span>
-    <span class="p">{</span><span class="nx">kind</span><span class="o">:</span> <span class="s2">&quot;XV.ListAttr&quot;</span><span class="p">,</span> <span class="nx">attr</span><span class="o">:</span> <span class="s2">&quot;uri&quot;</span><span class="p">}</span>
-  <span class="p">]}</span></code></pre></div>
-
-<p>I found this at random after a lot of trial and error. It’s strange because if you encapsulate that code with </p>
+<p>It’s strange because if you encapsulate that code with </p>
 
 <div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">XT</span><span class="p">.</span><span class="nx">extensions</span><span class="p">.</span><span class="nx">sip_account</span><span class="p">.</span><span class="nx">initList</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
  <span class="c1">//Code here</span>

@@ -5,12 +5,80 @@
     <description>An informal account of my adventures in coding, including scattered moments of genius as well as my more common stupidities. I intend to cover a variety of themes, the current trend is WebRTC.</description>
     <link>http://julianalouback.com/</link>
     <atom:link href="http://julianalouback.com/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Fri, 25 Jul 2014 18:43:52 -0300</pubDate>
-    <lastBuildDate>Fri, 25 Jul 2014 18:43:52 -0300</lastBuildDate>
+    <pubDate>Mon, 11 Aug 2014 12:28:08 -0300</pubDate>
+    <lastBuildDate>Mon, 11 Aug 2014 12:28:08 -0300</lastBuildDate>
     <generator>Jekyll v2.1.1</generator>
     
       <item>
-        <title>Extending an XTuple Business Object</title>
+        <title>JSCommunicator - Setup and Architecture</title>
+        <description>&lt;p&gt;&lt;em&gt;Preface&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;During Google Summer of Code 2014, I got to work on the Debian WebRTC portal under the mentorship of &lt;a href=&quot;http://danielpocock.com/&quot;&gt;Daniel Pocock&lt;/a&gt;. Now I had every intention of meticulously documenting my progress at each step of development in this blog, but I was a bit late in getting the blog up and running. I’ll now be publishing a series of posts to recap all I’ve done during GSoC. Better late than never.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Intro&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://jscommunicator.org&quot;&gt;JSCommunicator&lt;/a&gt; is a SIP communication tool developed in HTML and JavaScript. The code was designed to make integrating JSCommunicator with a website or web app as simple as possible. It’s quite easy, really. However, I do think a more detailed explanation on how to set things up and a guide to the JSCommunicator architecture could be of use, particularly for those wanting to modify the code in any way. &lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Setup&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;To begin, please &lt;a href=&quot;https://github.com/opentelecoms-org/jscommunicator.git&quot;&gt;fork the JSCommunicator repo&lt;/a&gt;. &lt;/p&gt;
+
+&lt;p&gt;If you are new to git, feel free to follow the steps in section “Setup” and “Clone” in &lt;a href=&quot;/tutorial/2014/07/17/contribute-a-jscommunicator-translation/&quot;&gt;this post&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;If you read the README file (which you always should), you’ll see that JSCommunicator needs a SIP proxy that supports SIP over Websockets transport. Some options are:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;http://www.resiprocate.org&quot;&gt;repro from reSIProcate&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;http://www.kamailio.org&quot;&gt;Kamailio&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I didn’t find a tutorial for Kamailio setup, I did find one for &lt;a href=&quot;http://www.rtcquickstart.org/sip-proxy-installation/repro&quot;&gt;repro setup&lt;/a&gt;. And bonus, &lt;a href=&quot;http://danielpocock.com/get-webrtc-going-faster&quot;&gt;here&lt;/a&gt; you have a great tutorial on how to setup and configure your SIP proxy AND your TURN server.&lt;/p&gt;
+
+&lt;p&gt;In your project’s root directory, you’ll see a file named &lt;strong&gt;config-sample.js&lt;/strong&gt;. Make a copy of that file named &lt;strong&gt;config.js&lt;/strong&gt;. The &lt;strong&gt;config-sample.js&lt;/strong&gt; file has comments that are very instructive. In sum, the only thing you &lt;em&gt;have&lt;/em&gt; to modify is the &lt;a href=&quot;https://github.com/opentelecoms-org/jscommunicator/blob/master/config-sample.js#L11-L13&quot;&gt;&lt;strong&gt;turn_servers&lt;/strong&gt;&lt;/a&gt; property and the &lt;a href=&quot;https://github.com/opentelecoms-org/jscommunicator/blob/master/config-sample.js#L16-L20&quot;&gt;&lt;strong&gt;websocket&lt;/strong&gt;&lt;/a&gt; property. In my case, &lt;strong&gt;debrtc.org&lt;/strong&gt; was the domain registered for testing my project, so my config file has:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;nx&quot;&gt;turn_servers&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+	&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;server&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;turn:debrtc.org&amp;quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;     
+&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Note that unlike the sample, I didn’t set a username and password so SIP credentials will be used. &lt;/p&gt;
+
+&lt;p&gt;Now fill in the websocket property – here we use &lt;a href=&quot;http://www.sip5060.net/&quot;&gt;sip5060.net&lt;/a&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;nx&quot;&gt;websocket&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;servers&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;wss://ws.sip5060.net&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;connection_recovery_min_interval&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;connection_recovery_max_interval&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;30&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;I’m pretty sure you can set the connection_recovery properties to whatever you like. Everything else is optional. If you set the &lt;a href=&quot;https://github.com/opentelecoms-org/jscommunicator/blob/master/config-sample.js#L27-L34&quot;&gt;&lt;strong&gt;user&lt;/strong&gt;&lt;/a&gt; property, specifically &lt;strong&gt;display_name&lt;/strong&gt; and &lt;strong&gt;uri&lt;/strong&gt;, that will be used to fill in the Login form and takes preference over any ‘Remember me’ data. If you also set &lt;strong&gt;sip_auth_password&lt;/strong&gt;, JSCommunicator will automatically log in. &lt;/p&gt;
+
+&lt;p&gt;All the other properties are for other optional functionalities and are well explained.&lt;/p&gt;
+
+&lt;p&gt;You’ll need some third-party javascript that is not included in the JSCommunicator git repo. Namely jQuery version 1.4 or higher and ArbiterJS version 1.0. Download jQuery &lt;a href=&quot;http://jquery.com/download/&quot;&gt;here&lt;/a&gt; and ArbiterJS &lt;a href=&quot;http://arbiterjs.com/&quot;&gt;here&lt;/a&gt; and place the .js files in your project’s root directory. Do make sure that you are including the correct filename in your html file. For example, in &lt;a href=&quot;https://github.com/opentelecoms-org/jscommunicator/blob/master/phone-dev.shtml#L6&quot;&gt;&lt;strong&gt;phone-dev.shtml&lt;/strong&gt;&lt;/a&gt;, a file named &lt;strong&gt;jquery.js&lt;/strong&gt; is included. The file you downloaded will likely have version numbers in it’s file name. So rename the downloaded file or change the content of src in your includes. This is uber trivial, but I’ve made the mistake several times.&lt;/p&gt;
+
+&lt;p&gt;You’ll also need JsSIP.js which can be downloaded &lt;a href=&quot;http://jssip.net/download/&quot;&gt;here&lt;/a&gt;. Same naming care must be taken as is the case for jQuery and ArbiterJS. The recently added Instant Messaging component and some of the new features need &lt;a href=&quot;http://jqueryui.com/download/&quot;&gt;jQuery-UI&lt;/a&gt; - so far version 1.11.* is known to work. From the downloaded .zip all you need is the jquery-ui-&lt;em&gt;.&lt;/em&gt;.&lt;em&gt;.js file and the jquery-ui-&lt;/em&gt;.&lt;em&gt;.&lt;/em&gt;.css file, also to be placed in the project’s root directory. If you’ll be using the internationalization support you’ll need &lt;a href=&quot;https://github.com/jquery-i18n-properties/jquery-i18n-properties/blob/master/jquery.i18n.properties.js&quot;&gt;jquery.i18n.properties.js&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;To try out JSCommunicator, deploy the website locally by copying your project directory to the apache document root directory (provided you are using &lt;a href=&quot;http://www.apache.org/&quot;&gt;apache&lt;/a&gt;, which is a good idea.). You’ll likely have to restart your server before this works. Now the demo .shtml pages only have a header with all the necessary includes, then a Server Side Include for the body of the page, with all the JSCommunicator html. The html content is in the file &lt;strong&gt;jscommunicator.inc&lt;/strong&gt;. You can &lt;a href=&quot;http://httpd.apache.org/docs/2.2/howto/ssi.html&quot;&gt;enable SSI&lt;/a&gt; on apache, OR you can simply copy and paste the content of &lt;strong&gt;jscommunicator.inc&lt;/strong&gt; into phone-dev.shmtl. Start up apache, open a browser and navigate to &lt;strong&gt;localhost/jscommunicator/phone-dev.shmtl&lt;/strong&gt; and you should see:
+&lt;img src=&quot;/assets/jscommunicatorRaw.jpg&quot; alt=&quot;jscommunicatorRaw&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Actually, pending updates to JSCommunicator, you should see a brand new UI! But all the core stuff will be the same.&lt;/em&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Mon, 11 Aug 2014 12:06:52 -0300</pubDate>
+        <link>http://julianalouback.com/tech/2014/08/11/jscommunicator-setup-and-architecture/</link>
+        <guid isPermaLink="true">http://julianalouback.com/tech/2014/08/11/jscommunicator-setup-and-architecture/</guid>
+        
+        
+        <category>tech</category>
+        
+      </item>
+    
+      <item>
+        <title>Extending an xTuple Business Object</title>
         <description>&lt;p&gt;&lt;a href=&quot;http://www.xtuple.com/&quot;&gt;xTuple&lt;/a&gt; is in my opinion incredibly well designed; the code is clean and the architecture ahderent to a standardized structure. All this makes working with xTuple software quite a breeze. &lt;/p&gt;
 
 &lt;p&gt;I wanted to integrate &lt;a href=&quot;https://github.com/opentelecoms-org/jscommunicator&quot;&gt;JSCommunicator&lt;/a&gt; into the web-based xTuple version. JSCommunicator is a SIP communication tool, so my first step was to create an extension for the SIP account data. Luckily for me, the xTuple development team published an awesome &lt;a href=&quot;https://github.com/xtuple/xtuple-extensions/blob/master/docs/TUTORIAL.md&quot;&gt;tutorial&lt;/a&gt; for writing an xTuple extension.&lt;/p&gt;
@@ -36,7 +104,7 @@
 
 &lt;p&gt;So by now we should have the Vagrant Virtual Development Environment set up and the web app up and running and accessible at localhost:8443. So far so good.&lt;/p&gt;
 
-&lt;p&gt;&lt;em&gt;Disclaimer: You will note that much of this is similar to xTuple’s &lt;a href=&quot;https://github.com/xtuple/xtuple-extensions/blob/master/docs/TUTORIAL.md&quot;&gt;tutorial&lt;/a&gt; but there are some small but important differences. Other Disclaimer: I’m describing how I did it, which may or may not be ‘up to snuff’. Works for me though.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Disclaimer: You will note that much of this is similar - or rather, nearly identical - to xTuple’s &lt;a href=&quot;https://github.com/xtuple/xtuple-extensions/blob/master/docs/TUTORIAL.md&quot;&gt;tutorial&lt;/a&gt; but there are some small but important differences and a few observations I think might be useful. Other Disclaimer: I’m describing how I did it, which may or may not be ‘up to snuff’. Works for me though.&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Schema&lt;/strong&gt;&lt;/p&gt;
 
@@ -321,45 +389,23 @@ Here’s the content of our &lt;strong&gt;parameter.js&lt;/strong&gt;:&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Extend List View&lt;/strong&gt;&lt;/p&gt;
 
-&lt;p&gt;You might want your new fields to show up on the list of User Accounts. I figured out a way to do this that looks strange and kind of incorrect, but it’s apparently working. &lt;/p&gt;
+&lt;p&gt;You might want your new fields to show up on the list of User Accounts. There’s a bit of an issue here because unlike what we did in &lt;strong&gt;workspace.js&lt;/strong&gt; and &lt;strong&gt;parameter.js&lt;/strong&gt;, we can’t append new things to the list of UserAccounts with the funciton &lt;strong&gt;XV.appendExtension(args)&lt;/strong&gt;. First I tried overwriting the original UserAccountList, which works but it’s far from ideal as this could result in a loss of data from the core implementation. After some &lt;a href=&quot;https://github.com/xtuple/xtuple/issues/1703#issuecomment-50115385&quot;&gt;discussion with the xTuple dev community&lt;/a&gt;, now there’s a better alternative:&lt;/p&gt;
 
 &lt;p&gt;Create the file &lt;strong&gt;/path/to/xtuple-extensions/source/sip_account/client/views/list.js&lt;/strong&gt; and add the following:&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;nx&quot;&gt;enyo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;XV.UserAccountList&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;XV.List&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;label&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;_userAccounts&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;loc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;collection&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;XM.UserAccountRelationCollection&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;parameterWidget&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;XV.UserAccountListParameters&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;query&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;orderBy&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
-      &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;attribute&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;username&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;]},&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;components&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
-      &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;XV.ListItem&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;components&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
-        &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;FittableColumns&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;components&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
-          &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;XV.ListColumn&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;classes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;short&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;components&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
-            &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;XV.ListAttr&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;attr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;username&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;isKey&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-          &lt;span class=&quot;p&quot;&gt;]},&lt;/span&gt;
-          &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;XV.ListColumn&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;classes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;short&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;components&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
-            &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;XV.ListAttr&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;attr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;propername&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-          &lt;span class=&quot;p&quot;&gt;]},&lt;/span&gt;
-          &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;XV.ListColumn&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;classes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;last&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;components&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
-            &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;XV.ListAttr&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;attr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;uri&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-          &lt;span class=&quot;p&quot;&gt;]}&lt;/span&gt;
-        &lt;span class=&quot;p&quot;&gt;]}&lt;/span&gt;
-      &lt;span class=&quot;p&quot;&gt;]}&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
-  
-  &lt;span class=&quot;nx&quot;&gt;XV&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;registerModelList&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;XM.UserAccountRelation&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;XV.UserAccountList&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;lineno&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;oldUserAccountListCreate&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;XV&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;UserAccountList&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;prototype&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;create&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;2&lt;/span&gt; 
+&lt;span class=&quot;lineno&quot;&gt;3&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;XV&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;UserAccountList&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;prototype&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;create&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;4&lt;/span&gt;   &lt;span class=&quot;nx&quot;&gt;oldUserAccountListCreate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;apply&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;arguments&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;5&lt;/span&gt;   &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;createComponent&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;6&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;XV.ListColumn&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;container&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;listItem&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;components&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;7&lt;/span&gt;        &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;XV.ListAttr&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;attr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;uri&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;8&lt;/span&gt;    &lt;span class=&quot;p&quot;&gt;]})&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;9&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;p&gt;This is actually what’s in &lt;a href=&quot;https://github.com/xtuple/xtuple/blob/master/enyo-client/application/source/views/list.js#L2512-L2535&quot;&gt;/path/to/xtuple/enyo-client/application/source/views/list.js&lt;/a&gt; – the entire highlighted part. All I did was add this to “components” after line 18:&lt;/p&gt;
+&lt;p&gt;To understand what I’m doing, check out the &lt;strong&gt;XV.UserAccountList&lt;/strong&gt; implementation in &lt;a href=&quot;https://github.com/xtuple/xtuple/blob/master/enyo-client/application/source/views/list.js#L2512-L2535&quot;&gt;/path/to/xtuple/enyo-client/application/source/views/list.js&lt;/a&gt; – the entire highlighted part. What we are doing is ‘extending’ XV.UserAccountList through ‘prototype-chaining’; this is how &lt;a href=&quot;http://enyojs.com/docs/2.4.0/key-concepts/kinds.html&quot;&gt;inheritance works with Enyo&lt;/a&gt;. In line 1 we create a prototype and in line 4 we inherit the features including original components array which the list is based on. We then create an additional component immitating the setup shown in &lt;strong&gt;XV.UserAccountList&lt;/strong&gt;: An &lt;strong&gt;XV.ListColumn&lt;/strong&gt; containing an &lt;strong&gt;XV.ListAttr&lt;/strong&gt;, which should be placed in the &lt;strong&gt;XV.ListItem&lt;/strong&gt; components array as is done with the existing columns (refer to &lt;a href=&quot;https://github.com/xtuple/xtuple/blob/master/enyo-client/application/source/views/list.js#L2512-L2535&quot;&gt;implementation&lt;/a&gt;). Components can or should (?) have &lt;a href=&quot;http://enyojs.com/docs/2.4.0/key-concepts/components.html&quot;&gt;names&lt;/a&gt; which are used to access said components. You’d refer to a specific component by the &lt;strong&gt;this.$.componentName&lt;/strong&gt; hash. The components in &lt;strong&gt;XV.UserAccountList&lt;/strong&gt; don’t have names, so Enyo automatically names them (apparently) based on the &lt;a href=&quot;http://enyojs.com/docs/2.4.0/key-concepts/kinds.html&quot;&gt;kind name&lt;/a&gt;, for example something of the kind &lt;em&gt;ListItem&lt;/em&gt; is named &lt;em&gt;listItem&lt;/em&gt;. I found this at random after a lot of trial and error and it’s not a bullet proof solution. Can be bettered.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;XV.ListColumn&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;classes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;last&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;components&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;XV.ListAttr&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;attr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;uri&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;]}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-&lt;p&gt;I found this at random after a lot of trial and error. It’s strange because if you encapsulate that code with &lt;/p&gt;
+&lt;p&gt;It’s strange because if you encapsulate that code with &lt;/p&gt;
 
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;nx&quot;&gt;XT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;extensions&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;sip_account&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;initList&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
  &lt;span class=&quot;c1&quot;&gt;//Code here&lt;/span&gt;
@@ -405,7 +451,7 @@ Here’s the content of our &lt;strong&gt;parameter.js&lt;/strong&gt;:&lt;/p&gt;
     &lt;p&gt;Sign in to &lt;a href=&quot;http://github.com&quot;&gt;Github&lt;/a&gt;&lt;/p&gt;
   &lt;/li&gt;
   &lt;li&gt;
-    &lt;p&gt;Browse to https://github.com/JLouback/jscommunicator&lt;/p&gt;
+    &lt;p&gt;Browse to https://github.com/opentelecoms-org/jscommunicator.git&lt;/p&gt;
   &lt;/li&gt;
   &lt;li&gt;
     &lt;p&gt;Somewhere around the upper left corner, you will see a button labeled ‘Fork’. Click that. &lt;/p&gt;

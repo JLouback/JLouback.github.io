@@ -20,7 +20,7 @@ Now fork the JSCommunicator repo. I really like the word 'fork'. Great term. If 
 
 1. Sign in to [Github](http://github.com)
 
-2. Browse to https://github.com/JLouback/jscommunicator
+2. Browse to https://github.com/opentelecoms-org/jscommunicator.git
 
 3. Somewhere around the upper left corner, you will see a button labeled 'Fork'. Click that. 
 
