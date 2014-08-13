@@ -60,6 +60,59 @@ To try out JSCommunicator, deploy the website locally by copying your project di
 
 *Actually, pending updates to JSCommunicator, you should see a brand new UI! But all the core stuff will be the same.*
 
+**Architecture**
+
+*Disclaimer: I'm explaining my view of the JSCommunicator architecture, which currently may not be 100% correct. But so far it's been enough for me to make my modifications and additions to the code, so it could be of use. One I get a JSCommunicator Founding Father's stamp of approval, I'll be sure to confirm the accuracy.*
+
+Now to explain how the JSCommunicator code interacts, the use of each code 'item' is described, ignoring all the html and css which will vary according to how you choose to use JSCommunicator. I'm also not going to explain jQuery which is a dependency but not specific to WebRTC. The core JSCommunicator code is the following:
+
+* config.js
+* jssip-helper.js
+* parseuri.js
+* webrtc-check.js
+* JSCommUI.js
+* JSCommManager.js
+* make-release
+* init.js
+* Arbiter.js
+* JsSIP.js
+
+Each of these files will be presented in what I hope is an intuitive order.
+
+* **config.js** - As expected, this file contains your custom configuration specifications, i.e. the servers being used to direct traffic, authentication credentials, and a series of properties to enable/disable optional functionalities in JSCommunicator. 
+
+The next three files could be considered 'utils':
+
+* **jssip-helper.js** - This will load the data from config.js necessary to run JSCommunicator, such as configurations relating to servers, websockets, connection specifications (timeout, recovery intervals), and user credentials. Properties for optional features are ignored of course. 
+
+* **parseuri.js** - Contains a function to segregate data from a URI.
+
+* **webrtc-check.js** - Verifies if browser is WebRTC compatible by checking if it's possible to enable camera and microphone access.
+
+These two are where the magic happens:
+
+* **JSCommUI.js** - Responsible for the UI component, controling what becomes visible to the user, audio effects, client-side error handling, and gathering the data that will be fed to JSCommManager.js.
+
+* **JSCommManager.js** - Initializes the SIP User Agent to manage the session including (but not limited to) beginning/terminating the session, sending/receiving SIP messages and calls, and signaling the state of the session and other important notifications such as incoming calls, messages received, etc.
+
+Now for some extras:
+
+* **make-release** - Combines the main .js files into one big file. Gets jssip-helper.js, parseuri.js, webrtc-check.js, JSCommUI.js and JSCommManager.js and spits out a new file JSComm.js with all that content. Now you understand why **phone-dev.shtml** included each of the 5 files mentioned above whereas **phone.shmtl** includes only JSComm.js which didn't exist until you ran make-release. That confused me a bit.
+
+* **init.js** - On page load, calls JSCommManager.js' init function, which eventually calls JSCommUI.js' init function. In other words, starts up the JSCommunicator app. I guess it's only used to show how to start up the app. This could be done directly on the page you're embedding JSCommunicator from. So maybe not entirely needed.
+
+Third party code:
+
+* **Arbiter.js** - Javascript implmentation of the publish/subscribe patten, written by [Matt Kruse](http://mattkruse.com/). In JSCommunicator it's used in JSCommManager.js to publish signals to describe direct the app's behavior. For example, JSCommManager will publish a message indicating that the user received a call from a certain URI. In event-demo.js we subscribe to this kind of message and when said message is received, an action can be performed such as adding to the app's call history. Very cool.
+
+* **JsSIP.js** - Implements the SIP WebSocket transport in Javascript. This ensures the transportantion of data is done in adherence to the [WebSocket protocol](https://tools.ietf.org/html/rfc7118). In JSCommManager.js we initialize a SIP User Agent based in the implementation in JsSIP.js. The User Agent will 'translate' all of the JSCommunicator actions into SIP WebSocket format. For example, when sending an IM, the JSCommunicator app will collect the essential data such as say the origin URI, destination URI and an IM message, while the User Agent is in charge of formating the data so that it can be transported in a SIP message unit. A SIP message contains a lot more information than just the sender, receiver and message. Of course, a lot of the info in a SIP message is irrelevant to the user and in JSCommUI.js we filter through all that data and only display what the user needs to see.
+
+Here's a diagram of sorts to help you visualize how the code interacts:
+
+![jscommArch](/assets/jscommArch.jpg)
+
+In sum, 1 - JSCommUI.js handles what is displayed in the UI and feeds data to JSCommManager.js; 2 - JSCommManager.js *actually does stuff*, feeding data to be displayed to JSCommUI.js; 3 - JSCommManager.js calls functions from the three 'utils', parseuri.js, webrtc-check.js and jssip-helpher.js which organizes the data from config.js; 4 - JSCommManager.js initializes a SIP User Agent based on the implementation in Arbiter.js.
 
 
+When making any changes to JSCommunicator, you will likely only be working with JSCommUI.js and JSCommManager.js.
 
