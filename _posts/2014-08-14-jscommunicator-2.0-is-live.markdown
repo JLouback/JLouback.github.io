@@ -35,4 +35,4 @@ no_contact = Please enter a contact.
 
 remember_me = Remember me
 
-I'll merge it myself but I'll be sure to add you to the authors list - or maybe I'll just take all the glory and pretend to be a polyglot.  
+I'll merge it myself but I'll be sure to add you to the authors list.
