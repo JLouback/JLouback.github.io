@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>JSCommunicator - Setup and Architecture</title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="An informal account of my adventures in coding, including scattered moments of genius as well as my more common stupidities. I intend to cover a variety of themes, the current trend is WebRTC.">
+    <link rel="canonical" href="http://julianalouback.com/tech/2014/08/11/jscommunicator-setup-and-architecture%20copy/">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+
+</head>
+
+
+    <body>
+
+    <header class="site-header">
+
+  <div class="wrap">
+
+    <a class="site-title" href="/">Juliana Louback, software dev.</a>
+
+    <nav class="site-nav">
+      <a href="#" class="menu-icon">
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+           viewBox="0 0 18 15" enable-background="new 0 0 18 15" xml:space="preserve">
+          <path fill="#505050" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0
+            h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#505050" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484
+            h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#505050" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0
+            c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+      </a>
+      <div class="trigger">
+        
+          <a class="page-link" href="/about/">About</a>
+        
+          
+        
+          
+        
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrap">
+      <div class="post">
+
+  <header class="post-header">
+    <h1>JSCommunicator - Setup and Architecture</h1>
+    <p class="meta">Aug 11, 2014</p>
+  </header>
+
+  <article class="post-content">
+  <p><em>Preface</em></p>
+
+<p><em>During Google Summer of Code 2014, I got to work on the Debian WebRTC portal under the mentorship of <a href="http://danielpocock.com/">Daniel Pocock</a>. Now I had every intention of meticulously documenting my progress at each step of development in this blog, but I was a bit late in getting the blog up and running. I’ll now be publishing a series of posts to recap all I’ve done during GSoC. Better late than never.</em></p>
+
+<p><strong>Intro</strong></p>
+
+<p><a href="http://jscommunicator.org">JSCommunicator</a> is a SIP communication tool developed in HTML and JavaScript. The code was designed to make integrating JSCommunicator with a website or web app as simple as possible. It’s quite easy, really. However, I do think a more detailed explanation on how to set things up and a guide to the JSCommunicator architecture could be of use, particularly for those wanting to modify the code in any way. </p>
+
+<p><strong>Setup</strong></p>
+
+<p>To begin, please <a href="https://github.com/opentelecoms-org/jscommunicator.git">fork the JSCommunicator repo</a>. </p>
+
+<p>If you are new to git, feel free to follow the steps in section “Setup” and “Clone” in <a href="/tutorial/2014/07/17/contribute-a-jscommunicator-translation/">this post</a>.</p>
+
+<p>If you read the README file (which you always should), you’ll see that JSCommunicator needs a SIP proxy that supports SIP over Websockets transport. Some options are:</p>
+
+<ul>
+  <li>
+    <p><a href="http://www.resiprocate.org">repro from reSIProcate</a></p>
+  </li>
+  <li>
+    <p><a href="http://www.kamailio.org">Kamailio</a></p>
+  </li>
+</ul>
+
+<p>I didn’t find a tutorial for Kamailio setup, I did find one for <a href="http://www.rtcquickstart.org/sip-proxy-installation/repro">repro setup</a>. And bonus, <a href="http://danielpocock.com/get-webrtc-going-faster">here</a> you have a great tutorial on how to setup and configure your SIP proxy AND your TURN server.</p>
+
+<p>In your project’s root directory, you’ll see a file named <strong>config-sample.js</strong>. Make a copy of that file named <strong>config.js</strong>. The <strong>config-sample.js</strong> file has comments that are very instructive. In sum, the only thing you <em>have</em> to modify is the <a href="https://github.com/opentelecoms-org/jscommunicator/blob/master/config-sample.js#L11-L13"><strong>turn_servers</strong></a> property and the <a href="https://github.com/opentelecoms-org/jscommunicator/blob/master/config-sample.js#L16-L20"><strong>websocket</strong></a> property. In my case, <strong>debrtc.org</strong> was the domain registered for testing my project, so my config file has:</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">turn_servers</span><span class="o">:</span> <span class="p">[</span>
+	<span class="p">{</span> <span class="nx">server</span><span class="o">:</span><span class="s2">&quot;turn:debrtc.org&quot;</span> <span class="p">}</span>     
+<span class="p">],</span></code></pre></div>
+
+<p>Note that unlike the sample, I didn’t set a username and password so SIP credentials will be used. </p>
+
+<p>Now fill in the websocket property – here we use <a href="http://www.sip5060.net/">sip5060.net</a>.</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">websocket</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">servers</span><span class="o">:</span> <span class="s1">&#39;wss://ws.sip5060.net&#39;</span><span class="p">,</span>
+    <span class="nx">connection_recovery_min_interval</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="nx">connection_recovery_max_interval</span><span class="o">:</span> <span class="mi">30</span><span class="p">,</span>
+  <span class="p">},</span></code></pre></div>
+
+<p>I’m pretty sure you can set the connection_recovery properties to whatever you like. Everything else is optional. If you set the <a href="https://github.com/opentelecoms-org/jscommunicator/blob/master/config-sample.js#L27-L34"><strong>user</strong></a> property, specifically <strong>display_name</strong> and <strong>uri</strong>, that will be used to fill in the Login form and takes preference over any ‘Remember me’ data. If you also set <strong>sip_auth_password</strong>, JSCommunicator will automatically log in. </p>
+
+<p>All the other properties are for other optional functionalities and are well explained.</p>
+
+<p>You’ll need some third-party javascript that is not included in the JSCommunicator git repo. Namely jQuery version 1.4 or higher and ArbiterJS version 1.0. Download jQuery <a href="http://jquery.com/download/">here</a> and ArbiterJS <a href="http://arbiterjs.com/">here</a> and place the .js files in your project’s root directory. Do make sure that you are including the correct filename in your html file. For example, in <a href="https://github.com/opentelecoms-org/jscommunicator/blob/master/phone-dev.shtml#L6"><strong>phone-dev.shtml</strong></a>, a file named <strong>jquery.js</strong> is included. The file you downloaded will likely have version numbers in it’s file name. So rename the downloaded file or change the content of src in your includes. This is uber trivial, but I’ve made the mistake several times.</p>
+
+<p>You’ll also need JsSIP.js which can be downloaded <a href="http://jssip.net/download/">here</a>. Same naming care must be taken as is the case for jQuery and ArbiterJS. The recently added Instant Messaging component and some of the new features need <a href="http://jqueryui.com/download/">jQuery-UI</a> - so far version 1.11.* is known to work. From the downloaded .zip all you need is the jquery-ui-<em>.</em>.<em>.js file and the jquery-ui-</em>.<em>.</em>.css file, also to be placed in the project’s root directory. If you’ll be using the internationalization support you’ll also need <a href="https://github.com/jquery-i18n-properties/jquery-i18n-properties/blob/master/jquery.i18n.properties.js">jquery.i18n.properties.js</a>.</p>
+
+<p>To try out JSCommunicator, deploy the website locally by copying your project directory to the apache document root directory (provided you are using <a href="http://www.apache.org/">apache</a>, which is a good idea.). You’ll likely have to restart your server before this works. Now the demo .shtml pages only have a header with all the necessary includes, then a Server Side Include for the body of the page, with all the JSCommunicator html. The html content is in the file <strong>jscommunicator.inc</strong>. You can <a href="http://httpd.apache.org/docs/2.2/howto/ssi.html">enable SSI</a> on apache, OR you can simply copy and paste the content of <strong>jscommunicator.inc</strong> into phone-dev.shmtl. Start up apache, open a browser and navigate to <strong>localhost/jscommunicator/phone-dev.shmtl</strong> and you should see:
+<img src="/assets/jscommunicatorRaw.jpg" alt="jscommunicatorRaw" /></p>
+
+<p><em>Actually, pending updates to JSCommunicator, you should see a brand new UI! But all the core stuff will be the same.</em></p>
+
+<p><strong>Architecture</strong></p>
+
+<p><em>Disclaimer: I’m explaining my view of the JSCommunicator architecture, which currently may not be 100% correct. But so far it’s been enough for me to make my modifications and additions to the code, so it could be of use. One I get a JSCommunicator Founding Father’s stamp of approval, I’ll be sure to confirm the accuracy.</em></p>
+
+<p>Now to explain how the JSCommunicator code interacts, the use of each code ‘item’ is described, ignoring all the html and css which will vary according to how you choose to use JSCommunicator. I’m also not going to explain jQuery which is a dependency but not specific to WebRTC. The core JSCommunicator code is the following:</p>
+
+<ul>
+  <li>config.js</li>
+  <li>jssip-helper.js</li>
+  <li>parseuri.js</li>
+  <li>webrtc-check.js</li>
+  <li>JSCommUI.js</li>
+  <li>JSCommManager.js</li>
+  <li>make-release</li>
+  <li>init.js</li>
+  <li>Arbiter.js</li>
+  <li>JsSIP.js</li>
+</ul>
+
+<p>Each of these files will be presented in what I hope is an intuitive order.</p>
+
+<ul>
+  <li><strong>config.js</strong> - As expected, this file contains your custom configuration specifications, i.e. the servers being used to direct traffic, authentication credentials, and a series of properties to enable/disable optional functionalities in JSCommunicator. </li>
+</ul>
+
+<p>The next three files could be considered ‘utils’:</p>
+
+<ul>
+  <li>
+    <p><strong>jssip-helper.js</strong> - This will load the data from config.js necessary to run JSCommunicator, such as configurations relating to servers, websockets, connection specifications (timeout, recovery intervals), and user credentials. Properties for optional features are ignored of course. </p>
+  </li>
+  <li>
+    <p><strong>parseuri.js</strong> - Contains a function to segregate data from a URI.</p>
+  </li>
+  <li>
+    <p><strong>webrtc-check.js</strong> - Verifies if browser is WebRTC compatible by checking if it’s possible to enable camera and microphone access.</p>
+  </li>
+</ul>
+
+<p>These two are where the magic happens:</p>
+
+<ul>
+  <li>
+    <p><strong>JSCommUI.js</strong> - Responsible for the UI component, controling what becomes visible to the user, audio effects, client-side error handling, and gathering the data that will be fed to JSCommManager.js.</p>
+  </li>
+  <li>
+    <p><strong>JSCommManager.js</strong> - Initializes the SIP User Agent to manage the session including (but not limited to) beginning/terminating the session, sending/receiving SIP messages and calls, and signaling the state of the session and other important notifications such as incoming calls, messages received, etc.</p>
+  </li>
+</ul>
+
+<p>Now for some extras:</p>
+
+<ul>
+  <li>
+    <p><strong>make-release</strong> - Combines the main .js files into one big file. Gets jssip-helper.js, parseuri.js, webrtc-check.js, JSCommUI.js and JSCommManager.js and spits out a new file JSComm.js with all that content. Now you understand why <strong>phone-dev.shtml</strong> included each of the 5 files mentioned above whereas <strong>phone.shmtl</strong> includes only JSComm.js which didn’t exist until you ran make-release. That confused me a bit.</p>
+  </li>
+  <li>
+    <p><strong>init.js</strong> - On page load, calls JSCommManager.js’ init function, which eventually calls JSCommUI.js’ init function. In other words, starts up the JSCommunicator app. I guess it’s only used to show how to start up the app. This could be done directly on the page you’re embedding JSCommunicator from. So maybe not entirely needed.</p>
+  </li>
+</ul>
+
+<p>Third party code:</p>
+
+<ul>
+  <li>
+    <p><strong>Arbiter.js</strong> - Javascript implmentation of the publish/subscribe patten, written by <a href="http://mattkruse.com/">Matt Kruse</a>. In JSCommunicator it’s used in JSCommManager.js to publish signals to describe direct the app’s behavior. For example, JSCommManager will publish a message indicating that the user received a call from a certain URI. In event-demo.js we subscribe to this kind of message and when said message is received, an action can be performed such as adding to the app’s call history. Very cool.</p>
+  </li>
+  <li>
+    <p><strong>JsSIP.js</strong> - Implements the SIP WebSocket transport in Javascript. This ensures the transportantion of data is done in adherence to the <a href="https://tools.ietf.org/html/rfc7118">WebSocket protocol</a>. In JSCommManager.js we initialize a SIP User Agent based in the implementation in JsSIP.js. The User Agent will ‘translate’ all of the JSCommunicator actions into SIP WebSocket format. For example, when sending an IM, the JSCommunicator app will collect the essential data such as say the origin URI, destination URI and an IM message, while the User Agent is in charge of formating the data so that it can be transported in a SIP message unit. A SIP message contains a lot more information than just the sender, receiver and message. Of course, a lot of the info in a SIP message is irrelevant to the user and in JSCommUI.js we filter through all that data and only display what the user needs to see.</p>
+  </li>
+</ul>
+
+<p>Here’s a diagram of sorts to help you visualize how the code interacts:</p>
+
+<p><img src="/assets/jscommArch.jpg" alt="jscommArch" /></p>
+
+<p>In sum, 1 - JSCommUI.js handles what is displayed in the UI and feeds data to JSCommManager.js; 2 - JSCommManager.js <em>actually does stuff</em>, feeding data to be displayed to JSCommUI.js; 3 - JSCommManager.js calls functions from the three ‘utils’, parseuri.js, webrtc-check.js and jssip-helpher.js which organizes the data from config.js; 4 - JSCommManager.js initializes a SIP User Agent based on the implementation in Arbiter.js.</p>
+
+<p>When making any changes to JSCommunicator, you will likely only be working with JSCommUI.js and JSCommManager.js.</p>
+
+
+  </article>
+
+</div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrap">
+
+    <h2 class="footer-heading">Juliana Louback, software dev.</h2>
+
+    <div class="footer-col-1 column">
+      <ul>
+        <li>Juliana Louback, software dev.</li>
+        <li><a href="mailto:juliana.m.louback@gmail.com">juliana.m.louback@gmail.com</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col-2 column">
+      <ul>
+        <li>
+          <a href="https://github.com/jlouback">
+            <span class="icon github">
+              <svg version="1.1" class="github-icon-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                 viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+                <path fill-rule="evenodd" clip-rule="evenodd" fill="#C2C2C2" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761
+                c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32
+                c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472
+                c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037
+                C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65
+                c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261
+                c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082
+                c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129
+                c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/>
+              </svg>
+            </span>
+            <span class="username">jlouback</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://twitter.com/mslouback">
+            <span class="icon twitter">
+              <svg version="1.1" class="twitter-icon-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                 viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+                <path fill="#C2C2C2" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809
+                c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27
+                c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767
+                c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206
+                C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271
+                c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469
+                c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/>
+              </svg>
+            </span>
+            <span class="username">mslouback</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="footer-col-3 column">
+      <p class="text">An informal account of my adventures in coding, including scattered moments of genius as well as my more common stupidities. I intend to cover a variety of themes, the current trend is WebRTC.</p>
+    </div>
+
+  </div>
+
+</footer>
+
+
+    </body>
+</html>
