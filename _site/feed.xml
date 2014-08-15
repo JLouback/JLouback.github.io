@@ -5,8 +5,8 @@
     <description>An informal account of my adventures in coding, including scattered moments of genius as well as my more common stupidities. I intend to cover a variety of themes, the current trend is WebRTC.</description>
     <link>http://julianalouback.com/</link>
     <atom:link href="http://julianalouback.com/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Thu, 14 Aug 2014 23:42:03 -0300</pubDate>
-    <lastBuildDate>Thu, 14 Aug 2014 23:42:03 -0300</lastBuildDate>
+    <pubDate>Thu, 14 Aug 2014 23:45:51 -0300</pubDate>
+    <lastBuildDate>Thu, 14 Aug 2014 23:45:51 -0300</lastBuildDate>
     <generator>Jekyll v2.1.1</generator>
     
       <item>
@@ -192,8 +192,8 @@
 
 </description>
         <pubDate>Mon, 11 Aug 2014 12:06:52 -0300</pubDate>
-        <link>http://julianalouback.com/tech/2014/08/11/jscommunicator-setup-and-architecture%20copy/</link>
-        <guid isPermaLink="true">http://julianalouback.com/tech/2014/08/11/jscommunicator-setup-and-architecture%20copy/</guid>
+        <link>http://julianalouback.com/tech/2014/08/11/jscommunicator-setup-and-architecture/</link>
+        <guid isPermaLink="true">http://julianalouback.com/tech/2014/08/11/jscommunicator-setup-and-architecture/</guid>
         
         
         <category>tech</category>
