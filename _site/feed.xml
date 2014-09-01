@@ -5,9 +5,51 @@
     <description>An informal account of my adventures in coding, including scattered moments of genius as well as my more common stupidities. I intend to cover a variety of themes, the current trend is WebRTC.</description>
     <link>http://julianalouback.com/</link>
     <atom:link href="http://julianalouback.com/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Thu, 14 Aug 2014 23:45:51 -0300</pubDate>
-    <lastBuildDate>Thu, 14 Aug 2014 23:45:51 -0300</lastBuildDate>
+    <pubDate>Mon, 01 Sep 2014 12:43:30 -0400</pubDate>
+    <lastBuildDate>Mon, 01 Sep 2014 12:43:30 -0400</lastBuildDate>
     <generator>Jekyll v2.1.1</generator>
+    
+      <item>
+        <title>Debconf 2014 and How I Became a Debian Contributor</title>
+        <description>&lt;p&gt;&lt;strong&gt;Part 1 - Debconf 2014&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;This year I went to my first &lt;a href=&quot;http://debconf14.debconf.org/&quot;&gt;Debconf&lt;/a&gt;, which took place in Portland, OR during the last week of August 2014. All in all I have to rate my experience as very enlightening and in the end quite fun. &lt;/p&gt;
+
+&lt;p&gt;First of all, it was a little daunting to go to a conference in 1 - A city I’d never been to before; 2 - A conference with 300+ people, only 3 of which I knew and even then I only knew them virtually. Not to mention I was in the presence of some extremely brilliant and known contirbutors in the Debian community which was somewhat intimidating. Just to give you an idea, &lt;a href=&quot;http://en.wikipedia.org/wiki/Linus_Torvalds&quot;&gt;Linus Torvalds&lt;/a&gt; showed up for a Q&amp;amp;A session last Friday morning! Jealous? Actually I missed that too. It was kind of a last minute thing, booked for coincidentally the exact time I’d be flying out of Portland. I found out about it much too late. But luckily for me and maybe you, the session was filmed and can be seen &lt;a href=&quot;http://meetings-archive.debian.net/pub/debian-meetings/2014/debconf14/webm/QA_with_Linus_Torvalds.webm&quot;&gt;here&lt;/a&gt;. Isn’t that a treat?&lt;/p&gt;
+
+&lt;p&gt;Point made, there are lots of really talented people there, both techies and non-techies. It’s easy to feel you’re out of league, at least I did. But I’d highly encourage you to ignore such feelings if you’re ever in the same situation. Debian has been built on for a long time now, but although a lot has been done, a lot still needs to be done. The Debian community is very welcoming of new contributors and users, regardless of the level of expertise. So far I haven’t been snubbed by anyone. To the contrary, all my interactions with the Debian community members has been extremely positive. &lt;/p&gt;
+
+&lt;p&gt;So go ahead and attend the meetings and presentations, even if you think it’s not your area of expertise. Debconf was organized (or at least this one was) as a series of talks, meet ups and ad hoc sessions, some of which occured simultaneously. The sessions were all about different components of the Debian universe, from presenting new features to overviews of accomplishments to discussing issues and how to fix them. A schedule with the location and description of each session was posted on the &lt;a href=&quot;https://summit.debconf.org/debconf14/&quot;&gt;Debconf wiki&lt;/a&gt;. Sometimes none of the sessions at a certain time was on a topic I knew very much about. But I’d sit in anyways. There’s no rule to attending the sessions, no ‘minimum qualifications’ required. You’ll likely learn something new and you just might find out there is something you can do to contribute. There are also hackathons that are quite the thing or so I heard. Or you could walk about and meet new people, do some networking.&lt;/p&gt;
+
+&lt;p&gt;I have to say networking was the highlight of the Debconf for me. Remember I said I knew about 3 people who were at the conference? Well, I had actually just corresponded with those people. I didn’t really &lt;em&gt;know&lt;/em&gt; them. So on my first day I spent quite some time shyly peeking at people’s name tags, trying to recognize someone I had ‘met’ over email or IRC. But with 300 or so people at the conference, I was unsuccessful. So I finally gave up on that strategy and walked up to a random person, stuck out my hand and said, “Hi. My name is Juliana. This is my first Debconf. What’s your name and what do you do for Debian?” This may not be according to protocol, but it worked for me. I got to meet lots of people that way, met some Debian contributos from my home country (Brazil), some from my current city (NYC), and yet others that had similar interests as I do who I might work with in the near future. For example, I love Machine Learning, I’m currently beginning my graduate studies on that track. Several Debian contributors offered to introduce me to a well known Machine Learning researcher and Debian contributor who is in NYC. Others had tried out &lt;a href=&quot;https://github.com/opentelecoms-org/jscommunicator&quot;&gt;JSCommunicator&lt;/a&gt; and had lots of suggestions for new features and fixes, or wanted to know more about the project and WebRTC in general. Also, not everyone there is a super experienced Debian contributor or user. There are a lot of newbies like me. &lt;/p&gt;
+
+&lt;p&gt;I got to do a quick 20-min presentation and demo of the work I had done on JSCommunicator during GSoC 2014. Oh my goodness that was nerve-wracking, but not half as painful as I expected. My mentor (&lt;a href=&quot;http://danielpocock.com/&quot;&gt;Daniel Pocock&lt;/a&gt;) wisely suggested that when confronted with a question I didn’t know how to answer, to redirect the question to to the audience. Chances are, there is someone there that knows the answer. If not, it will at least spark a good discussion.&lt;/p&gt;
+
+&lt;p&gt;When meeting new people at Debian, a question almost everyone asked is “How did you start working with/for Debian?”. So I thought it would be a good topic to post about.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Part 2 - How I Became a Debian Contributor&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Sometime in late October of 2013 (I think) I received an email from one of my professors at &lt;a href=&quot;http://www2.uniriotec.br/UNIRIO-CCET/&quot;&gt;UNIRIO&lt;/a&gt; forwarding a description of the &lt;a href=&quot;http://gnome.org/opw/&quot;&gt;Outreach Program for Women&lt;/a&gt;. OPW is a program organized by the &lt;a href=&quot;http://www.gnome.org/&quot;&gt;GNOME&lt;/a&gt; which endeavors to get more women involved in FOSS. OPW is similar to &lt;a href=&quot;https://developers.google.com/open-source/soc/?csw=1&quot;&gt;Google Summer of Code&lt;/a&gt;; you work remotely from home, guided by an assigned mentor. Debian was one of the 8 participating organizations that year. There was a list of project proposals which I perused, a few of them caught my eye and these projects were all Debian. I’d already been a fan of FOSS before. I had used the Ubuntu and Debian OS, I’d migrated to &lt;a href=&quot;http://www.gimp.org/&quot;&gt;GIMP&lt;/a&gt; from Photoshop and &lt;a href=&quot;https://www.openoffice.org/&quot;&gt;Open Office&lt;/a&gt; from Microsoft Office, for example. I’d strongly advocated the use of some of my prefered open source apps and programs to my friends and family. But I hadn’t ever contributed to a FOSS project.&lt;/p&gt;
+
+&lt;p&gt;There’s no time like the present, so I reached out the the mentor responsible for one of the projects I was interested in, &lt;a href=&quot;danielpocock.com&quot;&gt;Daniel Pocock&lt;/a&gt;. Daniel guided me through making a small contribution to a FOSS project, which serves as a token demonstration of my abilities and is part of the application process. I added a small feature to JMXetric(https://github.com/ganglia/jmxetric) and suggested a fix for an &lt;a href=&quot;https://github.com/xtuple/qt-client/commit/7892bbe30bf345b7f7d4de24afed3b342c7751b0&quot;&gt;issue&lt;/a&gt; in the &lt;a href=&quot;www.xtuple.com&quot;&gt;xTuple&lt;/a&gt; project. Actually, I had forgotten about this. Recently I made another &lt;a href=&quot;/tech/2014/07/25/extending-an-xtuple-business-object/&quot;&gt;contribution to xTuple&lt;/a&gt;, it’s funny to see things come full circle. I also had to write a profile-ish description of my experience and how I intended on contributing during OPW on the Debian wiki, if you’d like you can check it out &lt;a href=&quot;https://wiki.debian.org/Juliana%20Louback&quot;&gt;here&lt;/a&gt;. &lt;/p&gt;
+
+&lt;p&gt;I wouldn’t follow my example to a T, because in the end I didn’t make the OPW selection. Actually, I take that back. The fact I wasn’t chosen for OPW that year doesn’t mean I was incompetent or incapable of making a valuable contribution. OPW and GSoC do not have unlimited resources, they can’t include everyone they’d like to. They receive thousands of proposals from very talented engineers and not everyone can participate at a given moment. But even though I wasn’t selected, like I said, I could still pitch in. It’s good to keep in mind that people usually aren’t paid to contribute to FOSS. It’s usually volunteer based, which I think is one of the beauties of the FOSS community and in my opinion one of the causes of it’s success and great quality. People contribute because they &lt;em&gt;want&lt;/em&gt; to, not because they &lt;em&gt;have&lt;/em&gt; to. &lt;/p&gt;
+
+&lt;p&gt;I will say I was a little disappointed at not being chosen. But after being reassured that this ‘rejection’ wasn’t due to any lack on my part, I decided to continue contributing to the Debian project I’d applied to. I was begining the final semester of my undergraduate studies which included writing a thesis. To be able to focus on my thesis and graduate on time, I’d stopped working and was studying full time. But I didn’t want to lose practice and contributing to a FOSS project is a great way to stay in coding shape while doing something &lt;em&gt;useful&lt;/em&gt;. So continue contributing I did.&lt;/p&gt;
+
+&lt;p&gt;It paid off. I gained experience, added value to a FOSS project and I think my previous contributions added weight to the application I later made for GSoC 2014. I passed this time. To be honest, I really wasn’t counting on it. Actually, I was certain I wouldn’t pass for some reason - insecure much? But with GSoC I wasn’t too anxious about it as I was with the OPW application because by then, I was already ‘hooked’. I’d learned about all the &lt;a href=&quot;/non-tech/2014/07/16/become-an-open-source-contributor/&quot;&gt;benefits of becoming a FOSS contributor&lt;/a&gt; and I wasn’t stopping anytime soon. I had every intention of still working on my FOSS project with or without GSoC. GSoC 2014 ended a week ago (August 18th 2014). There’s a list of things I still want to do with JSCommunicator and you can be sure I’ll keep working on them. &lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;P.S. This is not to say that programs like OPW and GSoC aren’t amazing programs. Try it out if you can, it’s really a great experience.&lt;/em&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Mon, 01 Sep 2014 06:06:52 -0400</pubDate>
+        <link>http://julianalouback.com/tech/2014/09/01/how-i-became-a-debian-contributor/</link>
+        <guid isPermaLink="true">http://julianalouback.com/tech/2014/09/01/how-i-became-a-debian-contributor/</guid>
+        
+        
+        <category>tech</category>
+        
+      </item>
     
       <item>
         <title>JSCommunicator 2.0 (Beta) is Live!</title>
@@ -41,9 +83,9 @@
 
 &lt;p&gt;remember_me = Remember me&lt;/p&gt;
 
-&lt;p&gt;I’ll merge it myself but I’ll be sure to add you to the authors list - or maybe I’ll just take all the glory and pretend to be a polyglot.  &lt;/p&gt;
+&lt;p&gt;I’ll merge it myself but I’ll be sure to add you to the authors list.&lt;/p&gt;
 </description>
-        <pubDate>Thu, 14 Aug 2014 20:06:52 -0300</pubDate>
+        <pubDate>Thu, 14 Aug 2014 19:06:52 -0400</pubDate>
         <link>http://julianalouback.com/tech/2014/08/14/jscommunicator-2.0-is-live/</link>
         <guid isPermaLink="true">http://julianalouback.com/tech/2014/08/14/jscommunicator-2.0-is-live/</guid>
         
@@ -191,7 +233,7 @@
 &lt;p&gt;When making any changes to JSCommunicator, you will likely only be working with JSCommUI.js and JSCommManager.js.&lt;/p&gt;
 
 </description>
-        <pubDate>Mon, 11 Aug 2014 12:06:52 -0300</pubDate>
+        <pubDate>Mon, 11 Aug 2014 11:06:52 -0400</pubDate>
         <link>http://julianalouback.com/tech/2014/08/11/jscommunicator-setup-and-architecture/</link>
         <guid isPermaLink="true">http://julianalouback.com/tech/2014/08/11/jscommunicator-setup-and-architecture/</guid>
         
@@ -546,7 +588,7 @@ Here’s the content of our &lt;strong&gt;parameter.js&lt;/strong&gt;:&lt;/p&gt;
 &lt;p&gt;That’s all. Rebuild the app and restart your server and when you select Setup &amp;gt; User Accounts in the web app you should see the Sip URI displayed on the User Accounts that have the Sip Account data. Add a new User Account to try this out.&lt;/p&gt;
 
 </description>
-        <pubDate>Fri, 25 Jul 2014 12:06:52 -0300</pubDate>
+        <pubDate>Fri, 25 Jul 2014 11:06:52 -0400</pubDate>
         <link>http://julianalouback.com/tech/2014/07/25/extending-an-xtuple-business-object/</link>
         <guid isPermaLink="true">http://julianalouback.com/tech/2014/07/25/extending-an-xtuple-business-object/</guid>
         
@@ -676,7 +718,7 @@ Here’s the content of our &lt;strong&gt;parameter.js&lt;/strong&gt;:&lt;/p&gt;
 
 &lt;p&gt;If first repo is opentelecoms-org:i18n-support and the second is YOUR_USER:i18n-support and you’ve verified (scroll down) that there are 2 files changed which are your new .properties file and the added element to the available_languages.xml, go ahead and press create pull request. It’ll open a window with a text box you can add an explanation to with one final ‘Create pull request’ button. Click that and you’re done! You’ve kindly contributed with a translation for JSCommunicator! &lt;/p&gt;
 </description>
-        <pubDate>Thu, 17 Jul 2014 05:06:52 -0300</pubDate>
+        <pubDate>Thu, 17 Jul 2014 04:06:52 -0400</pubDate>
         <link>http://julianalouback.com/tutorial/2014/07/17/contribute-a-jscommunicator-translation/</link>
         <guid isPermaLink="true">http://julianalouback.com/tutorial/2014/07/17/contribute-a-jscommunicator-translation/</guid>
         
@@ -728,7 +770,7 @@ Here’s the content of our &lt;strong&gt;parameter.js&lt;/strong&gt;:&lt;/p&gt;
 
 &lt;p&gt;All in all, it was great to virtually meet Yehuda and his epic students who all seemed very clever engineers. I’m looking forward to our next meetup once I gain some time-management skills. &lt;/p&gt;
 </description>
-        <pubDate>Wed, 16 Jul 2014 07:06:52 -0300</pubDate>
+        <pubDate>Wed, 16 Jul 2014 06:06:52 -0400</pubDate>
         <link>http://julianalouback.com/non-tech/2014/07/16/become-an-open-source-contributor/</link>
         <guid isPermaLink="true">http://julianalouback.com/non-tech/2014/07/16/become-an-open-source-contributor/</guid>
         
