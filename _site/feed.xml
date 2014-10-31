@@ -5,9 +5,46 @@
     <description>An informal account of my adventures in coding, including scattered moments of genius as well as my more common stupidities. I intend to cover a variety of themes, the current trend is WebRTC.</description>
     <link>http://julianalouback.com/</link>
     <atom:link href="http://julianalouback.com/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Mon, 01 Sep 2014 21:05:26 -0400</pubDate>
-    <lastBuildDate>Mon, 01 Sep 2014 21:05:26 -0400</lastBuildDate>
+    <pubDate>Fri, 31 Oct 2014 00:24:27 -0400</pubDate>
+    <lastBuildDate>Fri, 31 Oct 2014 00:24:27 -0400</lastBuildDate>
     <generator>Jekyll v2.1.1</generator>
+    
+      <item>
+        <title>JSCommunicator at xTupleCon 2014</title>
+        <description>&lt;p&gt;Two weeks ago I left NYC for a day trip to Norfolk, Virginia, to attend &lt;a href=&quot;http://xtuple.com/xtuple-conference-2014&quot;&gt;xTupleCon 2014&lt;/a&gt;. For those who don’t know, &lt;a href=&quot;http://xtuple.com&quot;&gt;xTuple&lt;/a&gt; is an incredibly reknown open source Enterprise Resource Planning (ERP) software. If you’ve been following this blog, you might recall that during my participation in the Google Summer of Code 2014, I wrote a beta JSCommunicator extension for xTuple (to see how I went about doing that, look up &lt;a href=&quot;/tech/2014/07/25/kickstarting-the-jscommunicator-xtuple-extension/&quot;&gt;Kickstarting the JSCommunicator-xTuple extension&lt;/a&gt;).&lt;/p&gt;
+
+&lt;p&gt;Now, I wasn’t flying down to Virginia on the eve of my first grad school midterms (gasp!) for fun - although I will admit, I enjoyed myself a fair amount. My GSoC mentor, &lt;a href=&quot;http://danielpocock.com&quot;&gt;Daniel Pocock&lt;/a&gt; was giving a talk about WebRTC and JSCommunicator at xTupleCon and invited me to participate. So that was the first perk of going to xTupleCon, I got to finally meet my GSoC mentor in person!&lt;/p&gt;
+
+&lt;p&gt;During the presentation, Daniel provided a high level expanation of WebRTC and how it works. WebRTC (Web Real Time Communications) enables real time transmission of audio, video and data streams through browser-to-browser applications. This is one of the many perks of WebRTC; it doesn’t require installation of plugins, making its use less vulnerable to security breaches. Websockets are used for the signalling channel and the SIP or XMPP can be used as the signaling protocol - in JSCommunicator, we used SIP. What was also done in JSCommunicator and can be done in other applications is to use a library to implement the signaling and SIP stack. JSCommunicator uses (and I highly reccomend) &lt;a href=&quot;http://jssip.com&quot;&gt;JsSIP&lt;/a&gt;. &lt;/p&gt;
+
+&lt;p&gt;The basic SIP architecture is comprised of peers and a SIP Proxy Server that supports SIP over Websockets transport:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/sipArch.png&quot; alt=&quot;sipArch&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;If you have users behind NAT, you’ll also need a TURN server for relay:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/sipArch2.png&quot; alt=&quot;sipArch2&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;In both cases, setup is not too difficult, particularly if using &lt;a href=&quot;http://www.resiprocate.org&quot;&gt;reSIProcate&lt;/a&gt; which offers both the SIP proxy and the TURN server. Daniel Pocock has an excellent post on &lt;a href=&quot;http://danielpocock.com/get-webrtc-going-faster&quot;&gt;how to setup and configure your SIP proxy AND your TURN server&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;With regard to JSCommunicator, it is a generic telephone in HTML5 which can easily be embedded in any web site or web app. Almost every aspect of JSCommunicator is easily customizable. More about JSCommunicator setup and architecture is detailed in a &lt;a href=&quot;% post_url 2014-08-11-&quot;&gt;previous post&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;The JSCommunicator-xTuple extension can be installed in xTuple as an npm package (xtuple-jscommunicator). It is still at a very beta - or even pre-beta - stage and there are various limitations; the configuration must be hard-coded and dialing is done manually as opposed to clicking on a contact. Some of these ‘limitations’ are features are on the wish list for future work. For example, some ideas for the next version of the extension are a click to dial from CRM records functionality and to bring up CRM records for an incomming call. Additionaly, the SIP proxy could be automatically installed with xTuple server if desired. &lt;/p&gt;
+
+&lt;p&gt;We closed the presentation with a live demo during which I made a video call from a JSCommunicator instance embedded in &lt;a href=&quot;http://freephonebox.net&quot;&gt;freephonebox.net&lt;/a&gt; to the JSCommunicator xTuple extension running on Daniel’s laptop. Despite the occasionally iffy hotel Wifi, the demo was a hit - at one point I even left the conference room and took a quick walk around the hotel and invited other xTupleCon attendees to say hello to those in the room. The audience’s reception was more enthusiastic than I anticipated, giving way to a pretty extensive Q&amp;amp;A session. It’s great to see more and more people interested in WebRTC, I can’t emphasize enough what a useful and versatile tool it is.&lt;/p&gt;
+
+&lt;p&gt;Here’s an ‘action shot’ of a part of the xTuple WebRTC presentation:
+&lt;img src=&quot;/assets/xtuple.png&quot; alt=&quot;xtuple&quot; /&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Thu, 30 Oct 2014 06:06:52 -0400</pubDate>
+        <link>http://julianalouback.com/tech/2014/10/30/jscommunicator-at-xtuplecon-2014/</link>
+        <guid isPermaLink="true">http://julianalouback.com/tech/2014/10/30/jscommunicator-at-xtuplecon-2014/</guid>
+        
+        
+        <category>tech</category>
+        
+      </item>
     
       <item>
         <title>Debconf 2014 and How I Became a Debian Contributor</title>
@@ -31,7 +68,7 @@
 
 &lt;p&gt;Sometime in late October of 2013 (I think) I received an email from one of my professors at &lt;a href=&quot;http://www2.uniriotec.br/UNIRIO-CCET/&quot;&gt;UNIRIO&lt;/a&gt; forwarding a description of the &lt;a href=&quot;http://gnome.org/opw/&quot;&gt;Outreach Program for Women&lt;/a&gt;. OPW is a program organized by the &lt;a href=&quot;http://www.gnome.org/&quot;&gt;GNOME&lt;/a&gt; which endeavors to get more women involved in FOSS. OPW is similar to &lt;a href=&quot;https://developers.google.com/open-source/soc/?csw=1&quot;&gt;Google Summer of Code&lt;/a&gt;; you work remotely from home, guided by an assigned mentor. Debian was one of the 8 participating organizations that year. There was a list of project proposals which I perused, a few of them caught my eye and these projects were all Debian. I’d already been a fan of FOSS before. I had used the Ubuntu and Debian OS, I’d migrated to &lt;a href=&quot;http://www.gimp.org/&quot;&gt;GIMP&lt;/a&gt; from Photoshop and to &lt;a href=&quot;https://www.openoffice.org/&quot;&gt;Open Office&lt;/a&gt; from Microsoft Office, for example. I’d strongly advocated the use of some of my prefered open source apps and programs to my friends and family. But I hadn’t ever contributed to a FOSS project.&lt;/p&gt;
 
-&lt;p&gt;There’s no time like the present, so I reached out the the mentor responsible for one of the projects I was interested in, &lt;a href=&quot;http://danielpocock.com&quot;&gt;Daniel Pocock&lt;/a&gt;. Daniel guided me through making a small contribution to a FOSS project, which serves as a token demonstration of my abilities and is part of the application process. I added a small feature to &lt;a href=&quot;https://github.com/ganglia/jmxetric&quot;&gt;JMXetric&lt;/a&gt; and suggested a fix for an &lt;a href=&quot;https://github.com/xtuple/qt-client/commit/7892bbe30bf345b7f7d4de24afed3b342c7751b0&quot;&gt;issue&lt;/a&gt; in the &lt;a href=&quot;http://www.xtuple.com&quot;&gt;xTuple&lt;/a&gt; project. Actually, I had forgotten about this. Recently I made another &lt;a href=&quot;/tech/2014/07/25/extending-an-xtuple-business-object/&quot;&gt;contribution to xTuple&lt;/a&gt;, it’s funny to see things come full circle. I also had to write a profile-ish description of my experience and how I intended on contributing during OPW on the Debian wiki, if you’d like you can check it out &lt;a href=&quot;https://wiki.debian.org/Juliana%20Louback&quot;&gt;here&lt;/a&gt;. &lt;/p&gt;
+&lt;p&gt;There’s no time like the present, so I reached out the the mentor responsible for one of the projects I was interested in, &lt;a href=&quot;http://danielpocock.com&quot;&gt;Daniel Pocock&lt;/a&gt;. Daniel guided me through making a small contribution to a FOSS project, which serves as a token demonstration of my abilities and is part of the application process. I added a small feature to &lt;a href=&quot;https://github.com/ganglia/jmxetric&quot;&gt;JMXetric&lt;/a&gt; and suggested a fix for an &lt;a href=&quot;https://github.com/xtuple/qt-client/commit/7892bbe30bf345b7f7d4de24afed3b342c7751b0&quot;&gt;issue&lt;/a&gt; in the &lt;a href=&quot;http://www.xtuple.com&quot;&gt;xTuple&lt;/a&gt; project. Actually, I had forgotten about this. Recently I made another &lt;a href=&quot;/tech/2014/07/25/kickstarting-the-jscommunicator-xtuple-extension/&quot;&gt;contribution to xTuple&lt;/a&gt;, it’s funny to see things come full circle. I also had to write a profile-ish description of my experience and how I intended on contributing during OPW on the Debian wiki, if you’d like you can check it out &lt;a href=&quot;https://wiki.debian.org/Juliana%20Louback&quot;&gt;here&lt;/a&gt;. &lt;/p&gt;
 
 &lt;p&gt;I wouldn’t follow my example to a T, because in the end I didn’t make the OPW selection. Actually, I take that back. The fact I wasn’t chosen for OPW that year doesn’t mean I was incompetent or incapable of making a valuable contribution. OPW and GSoC do not have unlimited resources; they can’t include everyone they’d like to. They receive thousands of proposals from very talented engineers and not everyone can participate at a given moment. But even though I wasn’t selected, like I said, I could still pitch in. It’s good to keep in mind that people usually aren’t paid to contribute to FOSS. It’s usually volunteer based, which I think is one of the beauties of the FOSS community and in my opinion one of the causes of it’s success and great quality. People contribute because they &lt;em&gt;want&lt;/em&gt; to, not because they &lt;em&gt;have&lt;/em&gt; to. &lt;/p&gt;
 
@@ -243,7 +280,7 @@
       </item>
     
       <item>
-        <title>Extending an xTuple Business Object</title>
+        <title>Kickstarting the JSCommunicator-xTuple Extension</title>
         <description>&lt;p&gt;&lt;a href=&quot;http://www.xtuple.com/&quot;&gt;xTuple&lt;/a&gt; is in my opinion incredibly well designed; the code is clean and the architecture ahderent to a standardized structure. All this makes working with xTuple software quite a breeze. &lt;/p&gt;
 
 &lt;p&gt;I wanted to integrate &lt;a href=&quot;https://github.com/opentelecoms-org/jscommunicator&quot;&gt;JSCommunicator&lt;/a&gt; into the web-based xTuple version. JSCommunicator is a SIP communication tool, so my first step was to create an extension for the SIP account data. Luckily for me, the xTuple development team published an awesome &lt;a href=&quot;https://github.com/xtuple/xtuple-extensions/blob/master/docs/TUTORIAL.md&quot;&gt;tutorial&lt;/a&gt; for writing an xTuple extension.&lt;/p&gt;
@@ -589,8 +626,8 @@ Here’s the content of our &lt;strong&gt;parameter.js&lt;/strong&gt;:&lt;/p&gt;
 
 </description>
         <pubDate>Fri, 25 Jul 2014 11:06:52 -0400</pubDate>
-        <link>http://julianalouback.com/tech/2014/07/25/extending-an-xtuple-business-object/</link>
-        <guid isPermaLink="true">http://julianalouback.com/tech/2014/07/25/extending-an-xtuple-business-object/</guid>
+        <link>http://julianalouback.com/tech/2014/07/25/kickstarting-the-jscommunicator-xtuple-extension/</link>
+        <guid isPermaLink="true">http://julianalouback.com/tech/2014/07/25/kickstarting-the-jscommunicator-xtuple-extension/</guid>
         
         
         <category>tech</category>
