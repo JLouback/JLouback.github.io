@@ -7,9 +7,7 @@ categories: tech
 
 As part of my [Brazil Scientific Mobility Masters Cohort Program](http://www.iie.org/Programs/Brazil-Scientific-Mobility) (what a mouthful), I have to engage in research or an internship related to my field of study during the summer - no 3 month vacation. This isn't as terrible as it sounds, particularly if you consider my summer will be spent working at Google. 
 
-Yes Google. The white whale of many techies, myself included. 
-
-Of course, you don't get that sought after offer letter before going through quite a battery of "entrance exams". The selection process isn't easy - or at least I didn't think so. I thought I'd write about the two things I concerned myself the most about: the timeline and the technical interviews. Hopefully this can be of help to people currently going through the process or for those who'd like to know what they're getting into.
+You don't get that much desired offer letter before going through quite a battery of "entrance exams". The selection process isn't easy - or at least I didn't think so. I thought I'd write about somthing I concerned myself much about: the admission timeline. Hopefully this can be of help to people currently going through the process or for those who'd like to know what they're getting into.
 
 ## The Timeline
 
@@ -44,8 +42,6 @@ Apparently the 6 week deadline isn't necessarily a hard and fast rule. About thr
 **6. The Offer Letter - January 2015:** On January 17th, 2015, I got that awesome offer letter, then spent the whole day smiling like an idiot. Actually that went on much longer than that, now and then I remember I'm heading there soon (in two weeks) and I smile stupidly again. 
 
 I had two weeks to accept/rejct the offer, needless to say I signed it the same day. So that was that. I think usually the phone interview is usually right before the technical interviews. Even so, my entire hiring process took about 3 months. If this happens to you, don't take it as a bad sign. I hear good things come to those who wait.
-
-Stay tuned for a post on the technical interviews.
 
 
 

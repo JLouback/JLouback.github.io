@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Contribute a JSCommunicator Translation</title>
     <meta name="viewport" content="width=device-width">
-    <meta name="description" content="An informal account of my adventures in coding, including scattered moments of genius as well as my more common stupidities. I intend to cover a variety of themes, the current trend is WebRTC.">
+    <meta name="description" content="An informal account of my adventures in coding, including scattered moments of genius as well as my more common stupidities. I intend to cover a variety of themes.">
     <link rel="canonical" href="http://julianalouback.com/tutorial/2014/07/17/contribute-a-jscommunicator-translation/">
 
     <!-- Custom CSS -->
@@ -21,7 +21,7 @@
 
   <div class="wrap">
 
-    <a class="site-title" href="/">Juliana Louback, software dev.</a>
+    <a class="site-title" href="/">Juliana Louback, software eng.</a><img src="/assets/jack.jpg">
 
     <nav class="site-nav">
       <a href="#" class="menu-icon">
@@ -65,9 +65,9 @@
 
 <p><strong>Setup</strong></p>
 
-<p>First, <a href="https://github.com/">create and account in Github</a>. Github is a hosting service for git repositories and open source projects get to use Github for FREE! As a result, many open source project repositories are hosted on Github, including but not limited to <a href="https://github.com/opentelecoms-org/jscommunicator">JSCommunicator</a>. </p>
+<p>First, <a href="https://github.com/">create and account in Github</a>. Github is a hosting service for git repositories and open source projects get to use Github for FREE! As a result, many open source project repositories are hosted on Github, including but not limited to <a href="https://github.com/opentelecoms-org/jscommunicator">JSCommunicator</a>.</p>
 
-<p>Once you have created your git account, follow steps 1-4 in the section Setting up git listed in <a href="https://help.github.com/articles/set-up-git">Github’s setup tutorial</a>. This will help you install git and configure anything you need. </p>
+<p>Once you have created your git account, follow steps 1-4 in the section Setting up git listed in <a href="https://help.github.com/articles/set-up-git">Github’s setup tutorial</a>. This will help you install git and configure anything you need.</p>
 
 <p><strong>Fork</strong></p>
 
@@ -81,7 +81,7 @@
     <p>Browse to https://github.com/opentelecoms-org/jscommunicator.git</p>
   </li>
   <li>
-    <p>Somewhere around the upper left corner, you will see a button labeled ‘Fork’. Click that. </p>
+    <p>Somewhere around the upper left corner, you will see a button labeled ‘Fork’. Click that.</p>
   </li>
 </ol>
 
@@ -101,13 +101,13 @@
 
 <div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">git</span> <span class="nb">clone</span> <span class="ss">https</span><span class="p">:</span><span class="sr">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="no">YOUR</span><span class="o">-</span><span class="no">USERNAME</span><span class="o">/</span><span class="n">jscommunicator</span></code></pre></div>
 
-<p>The current directory should now have a folder named ‘jscommunicator’ and in it is all the JSCommunicator code. </p>
+<p>The current directory should now have a folder named ‘jscommunicator’ and in it is all the JSCommunicator code.</p>
 
 <p><strong>Switch branches</strong></p>
 
 <p>The JSCommunicator repo has a branch for the i18n support. A branch is basically a copy of the code that you can modify without changing the original code. It’s great for adding new features, once everything is done and tested you can add the new feature to the original code. A more detailed explanation of branches can be found <a href="https://help.github.com/articles/creating-and-deleting-branches-within-your-repository">here</a>.</p>
 
-<p>On the terminal, enter </p>
+<p>On the terminal, enter</p>
 
 <div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">cd</span> <span class="n">jscommunicator</span>
 <span class="n">git</span> <span class="n">branch</span> <span class="o">-</span><span class="n">a</span></code></pre></div>
@@ -120,11 +120,11 @@
 
 <p><strong>Create a .properties file</strong></p>
 
-<p>Now your jscommunicator directory will have some new files for the internationalization functionality. Among them you should find an INTERNATIONALIZATION_README file with instructions for adding a JSCommunicator translation. It’s a less detailed version of this post, but it’s worth a read in case I’ve missed something here. </p>
+<p>Now your jscommunicator directory will have some new files for the internationalization functionality. Among them you should find an INTERNATIONALIZATION_README file with instructions for adding a JSCommunicator translation. It’s a less detailed version of this post, but it’s worth a read in case I’ve missed something here.</p>
 
-<p>Go to the directory ‘internationalization’. You’ll see a few .properties files with different language codes. Choose the language of your preference for the translation base and make a copy of it in the internationalization directory. Your copy should be named ‘Messages_LANGUAGECODE.properties’. For example, the language code for german is ‘de’, so the german file should be named ‘Messages_de.properties’. If you’re not sure about the code for your language, please check out this <a href="http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes">list of ISO 639-1 language codes</a> so you’re using the same code as (most) browsers. </p>
+<p>Go to the directory ‘internationalization’. You’ll see a few .properties files with different language codes. Choose the language of your preference for the translation base and make a copy of it in the internationalization directory. Your copy should be named ‘Messages_LANGUAGECODE.properties’. For example, the language code for german is ‘de’, so the german file should be named ‘Messages_de.properties’. If you’re not sure about the code for your language, please check out this <a href="http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes">list of ISO 639-1 language codes</a> so you’re using the same code as (most) browsers.</p>
 
-<p>The .properties file is list of key-value pairs, a word or a few words joined by ‘_’ which is the key, the equals sign ‘=’ then a word or phrase which is the value. Do <em>not</em> change anything to the <em>left</em> of the equals sign. Translate what is on the <em>right</em> of the equals sign. </p>
+<p>The .properties file is list of key-value pairs, a word or a few words joined by ‘_’ which is the key, the equals sign ‘=’ then a word or phrase which is the value. Do <em>not</em> change anything to the <em>left</em> of the equals sign. Translate what is on the <em>right</em> of the equals sign.</p>
 
 <p><strong>Modify available_languages.xml</strong></p>
 
@@ -139,11 +139,11 @@
 
 <p><strong>Test your work</strong></p>
 
-<p>Once you’ve made a .properties file, JSCommunicator will automatically load your translation if you’ve set your browser preference to that language. If your browser preference is french, it will load the Messages_fr.properties. If your browser preference is a language we don’t have a translation for (let’s say german), JScommunicator will load the default Messages.properties file which is in english. </p>
+<p>Once you’ve made a .properties file, JSCommunicator will automatically load your translation if you’ve set your browser preference to that language. If your browser preference is french, it will load the Messages_fr.properties. If your browser preference is a language we don’t have a translation for (let’s say german), JScommunicator will load the default Messages.properties file which is in english.</p>
 
 <p>The available_languages.ruby is used to build a language selection menu. If you add a language element without a corresponding .properties file, JSCommunicator will throw a JS error and load the default (english) translation. The same happens if you use different language codes in the .properties file name and the available_languages.ruby. The error won’t disturb your use of JSCommunicator, it just won’t load the language you selected. No harm, no foul. But if you want others to use your translation, do take care to do this correctly.</p>
 
-<p>If you read the INTERNATIONALIZATION_README, you will have seen that we need the jquery.i18n.properties.js file that’s included in the .html pages. You can download that code <a href="https://code.google.com/p/jquery-i18n-properties/">here</a>. Be sure to place it in the jscommunicator directory. This is only necessary if you want to see your addition at work, you don’t need this file to contribute your translation. There are other 3rd party code dependencies to run JSCommunicator too as you may have noticed. Just creating the .properties file and adding a language element to available_languages.ruby, if done correctly, is enough to make a pull request. </p>
+<p>If you read the INTERNATIONALIZATION_README, you will have seen that we need the jquery.i18n.properties.js file that’s included in the .html pages. You can download that code <a href="https://code.google.com/p/jquery-i18n-properties/">here</a>. Be sure to place it in the jscommunicator directory. This is only necessary if you want to see your addition at work, you don’t need this file to contribute your translation. There are other 3rd party code dependencies to run JSCommunicator too as you may have noticed. Just creating the .properties file and adding a language element to available_languages.ruby, if done correctly, is enough to make a pull request.</p>
 
 <p><strong>Commit</strong></p>
 
@@ -178,7 +178,7 @@
 
 <p><img src="/assets/pullEdit.jpg" alt="pullEdit" /></p>
 
-<p>If first repo is opentelecoms-org:i18n-support and the second is YOUR_USER:i18n-support and you’ve verified (scroll down) that there are 2 files changed which are your new .properties file and the added element to the available_languages.xml, go ahead and press create pull request. It’ll open a window with a text box you can add an explanation to with one final ‘Create pull request’ button. Click that and you’re done! You’ve kindly contributed with a translation for JSCommunicator! </p>
+<p>If first repo is opentelecoms-org:i18n-support and the second is YOUR_USER:i18n-support and you’ve verified (scroll down) that there are 2 files changed which are your new .properties file and the added element to the available_languages.xml, go ahead and press create pull request. It’ll open a window with a text box you can add an explanation to with one final ‘Create pull request’ button. Click that and you’re done! You’ve kindly contributed with a translation for JSCommunicator!</p>
 
   </article>
 
@@ -190,11 +190,11 @@
 
   <div class="wrap">
 
-    <h2 class="footer-heading">Juliana Louback, software dev.</h2>
+    <h2 class="footer-heading">Juliana Louback, software eng.</h2>
 
     <div class="footer-col-1 column">
       <ul>
-        <li>Juliana Louback, software dev.</li>
+        <li>Juliana Louback, software eng.</li>
         <li><a href="mailto:juliana.m.louback@gmail.com">juliana.m.louback@gmail.com</a></li>
       </ul>
     </div>
@@ -220,28 +220,12 @@
             <span class="username">jlouback</span>
           </a>
         </li>
-        <li>
-          <a href="https://twitter.com/mslouback">
-            <span class="icon twitter">
-              <svg version="1.1" class="twitter-icon-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                 viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
-                <path fill="#C2C2C2" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809
-                c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27
-                c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767
-                c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206
-                C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271
-                c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469
-                c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/>
-              </svg>
-            </span>
-            <span class="username">mslouback</span>
-          </a>
-        </li>
+        
       </ul>
     </div>
 
     <div class="footer-col-3 column">
-      <p class="text">An informal account of my adventures in coding, including scattered moments of genius as well as my more common stupidities. I intend to cover a variety of themes, the current trend is WebRTC.</p>
+      <p class="text">An informal account of my adventures in coding, including scattered moments of genius as well as my more common stupidities. I intend to cover a variety of themes.</p>
     </div>
 
   </div>

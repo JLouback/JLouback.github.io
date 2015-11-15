@@ -1,10 +1,9 @@
 # Site settings
-title: Juliana Louback, software dev.
+title: Juliana Louback, software eng.
 email: juliana.m.louback@gmail.com
-description: "An informal account of my adventures in coding, including scattered moments of genius as well as my more common stupidities. I intend to cover a variety of themes, the current trend is WebRTC."
+description: "An informal account of my adventures in coding, including scattered moments of genius as well as my more common stupidities. I intend to cover a variety of themes."
 baseurl: ""
 url: "http://julianalouback.com"
-twitter_username: mslouback
 github_username:  jlouback
 
 # Build settings
