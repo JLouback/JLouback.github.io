@@ -59,9 +59,8 @@ Python code: [emission_counts.py](https://github.com/JLouback/nlp-viterbi/blob/m
 
 Pseudocode:
 
-1. Iterate through each line in ner.counts file:
-1.1 Store each word-label-count combo in a dictionary count xy containing a dictionary for each word encountered. Each word dictionary contains key-value pairs of the label given to the word and its respective counter. i.e. count xy[Peter][I-PER] returns the number of times the word ‘Peter’ was labeled ‘I-PER’ in the training data.
-1.2 The dictionary count y contains 8 items, one for each label ( RARE , O, I-MISC, I-PER, I-ORG, I-LOC, B-MISC, B-PER, B-ORG, B-LOC); at each line, add the count to its respective label in count y to obtain the absolute tag frequency, Count(y).
+1. Iterate through each line in ner.counts file and store each word-label-count combo in a dictionary count_xy and update the dictionary of count_y. For example count_xy[Peter][I-PER] returns the number of times the word ‘Peter’ was labeled ‘I-PER’ in the training data and count_y[I-PER] the total number of 'I-PER' tags. The dictionary count_y contains 8 items, one for each label ( RARE , O, I-MISC, I-PER, I-ORG, I-LOC, B-MISC, B-PER, B-ORG, B-LOC);
+2. Return count_xy, count_y
 
 **Step 2. Get bigram and trigram counts**
 
@@ -70,8 +69,8 @@ Python code: [transition_counts.py](https://github.com/JLouback/nlp-viterbi/blob
 Pseudocode:
 
 1. Iterate through each line in the n-gram_counts file
-1.1 If the line contains ’2-GRAM’ add an item to the bigram_counts dictionary using the bigram (two space-separated labels following the tag type '2-gram') as key, count as value. This dictionary will contain Count(y<sub>i-2</sub>,y<sub>i-1</sub>).
-1.2 If the line contains ’3-GRAM’, add an item to the trigram_counts dictionary using the trigram as key, count as value. This dictionary will contain Count(y<sub>i-2</sub>, y<sub>i-1</sub>, y<sub>i</sub>).
+  1. If the line contains ’2-GRAM’ add an item to the bigram_counts dictionary using the bigram (two space-separated labels following the tag type '2-gram') as key, count as value. This dictionary will contain Count(y<sub>i-2</sub>,y<sub>i-1</sub>).
+  2. If the line contains ’3-GRAM’, add an item to the trigram_counts dictionary using the trigram as key, count as value. This dictionary will contain Count(y<sub>i-2</sub>, y<sub>i-1</sub>, y<sub>i</sub>).
 2. Return dictionaries of bigram and trigram counts.
 
 **Step 3. Viterbi**
@@ -79,20 +78,22 @@ Pseudocode:
 (For each line in the [input_file]):
 
 1. If the word was seen in training data (present in the count_xy dictionary), for each of the possible labels for the word:
-1.1 Calculate emission = count_xy[word][label] / float(count_y[label]
-1.2 Calculate transition = trigram_counts[trigram])/float(bigram_counts[bigram] Note: y<sub>i-2</sub> = *, y<sub>i-1</sub> = * for the first round
-1.3 Set probability = emission x transition
-1.4 Update max(probability) and arg max if needed.
+  1. Calculate emission = count_xy[word][label] / float(count_y[label]
+  2. Calculate transition = trigram_counts[trigram])/float(bigram_counts[bigram] Note: y<sub>i-2</sub> = *, y<sub>i-1</sub> = * for the first round
+  3. Set probability = emission x transition
+  4. Update max(probability) and arg max if needed.
 2 If the word was not seen in the training data:
-2.1 Calculate emission = count xy[_RARE_][label] / float(count y[label].
-2.2 Calculate q(y<sub>i</sub>|y<sub>i-1</sub>, y<sub>i-2</sub>) = trigram counts[trigram])/float(bigram counts[bigram]. Note: y<sub>i-2</sub> = ∗, y<sub>i-1</sub> = ∗ for the first round
-2.3 Set probability = emission ×q(y<sub>i</sub>|y<sub>i-1</sub>, y<sub>i-2</sub>).
-2.4 Update max(probability) if needed, arg max = _RARE_
+  1. Calculate emission = count xy[_RARE_][label] / float(count y[label].
+  2. Calculate q(y<sub>i</sub>|y<sub>i-1</sub>, y<sub>i-2</sub>) = trigram counts[trigram])/float(bigram counts[bigram]. Note: y<sub>i-2</sub> = ∗, y<sub>i-1</sub> = ∗ for the first round
+  3. Set probability = emission × transition
+  4. Update max(probability) if needed, arg max = _RARE_
 3. Write arg max and log(max(probability)) to output file.
+4. Update y<sub>i-2</sub>, y<sub>i-1</sub>.
 4. Update y<sub>i-2</sub>, y<sub>i-1</sub>.
 
 
-## Evaluation
+**Evaluation**
+
 Prof. Michael Collins provided an evaluation script [eval_ne_tagger.py](https://github.com/JLouback/nlp-viterbi/blob/master/eval_ne_tagger.py) to verify the output of your Viterbi implementation.
 Usage: python eval_ne_tagger.py ner_dev.key [output_file]
 
