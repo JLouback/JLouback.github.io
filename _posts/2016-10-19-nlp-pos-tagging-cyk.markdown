@@ -23,11 +23,11 @@ _VP -> V_
 
 _DET -> The_
 
-_N -> dog_
+_NOUN -> dog_
 
-_V -> barked_
+_VERB -> barked_
 
-Where _S_ is the sentence (or rather, the start symbol of the sentence), _NP_ is the nominal phrase, _VP_ is the verbal phrase, _DET_ a determinant, _N_ a noun, _V_ a verb.
+Where _S_ is the sentence (or rather, the start symbol of the sentence), _NP_ is the nominal phrase, _VP_ is the verbal phrase, _DET_ a determinant, _NOUN_ a noun, _VERB_ a verb.
 
 These rules can create a part-of-speach parse tree for any given sentence providing an understanding of how different parts of the sentence interact with and affect each other. This can be useful for machine translation, information extraction and other scenarios. However, there are cases where there is more than one grammatically correct parsing option. Take the sentence _"He fed her dog food"_. This could be interpreted as (A) A man feeding a woman's dog some food or (B) A man feeding a woman some dog food. A human would expect option (A) to be the correct interpretation (hopefully?), but would an algorithm?
 
@@ -113,22 +113,27 @@ The following steps are done for each line (sentence) in the development data. B
   (binary _X -> Y Z_ rule count / non-terminal count of _X_) * (probability of unary rule for _Y_) * (probability of unary rule for _Z_)
   3. If there hasn't yet been a key-value pair stored in the probability matrix [0][2] with the key _X_, set the value of key _X_ to the probability above. If not, check if the current binary rule has higher probability and if so, update the _X_ entry. Update the backpointer matrix at [0][2] to contain {"X":"Y Z"}.
 
-  This step is easier with examples. Take the sentence "The dog barks loudly". So in step 2 you'll probably have entered the pair {"DET":"the"} in the backpointer matrix at [0][1] and {"DET":0.12} (random probability value used here) in the probability matrix at [0][1]. You'd also enter {"NOUN":"dog"} and {"NOUN":0.2} at positions [1][2] in each matrix. So take the rule _NP -> ADJECTIVE NOUN_. Although _DET_ and _NOUN_ will likely have been matched to "the" and dog" and would have been included in the probability/backpointer matrix, the non-terminal _ADJECTIVE_ wouldn't match to "the" so this binary rule is a no-go. Now for the rule _NP -> DET NOUN_ we have a match, so we add an entry {"NP":0.23} to the probability matrix at [0][2] and {"NP":"DET NOUN"} to position [0][2] in the backpointer matrix. We fill up the upper right triangle of the matrix.
+  This step is easier with examples. Take the sentence "The dog barked". So in step 2 you'll probably have entered the pair {"DET":"the"} in the backpointer matrix at [0][1] and {"DET":0.12} (random probability value used here) in the probability matrix at [0][1]. You'd also enter {"NOUN":"dog"} and {"NOUN":0.2} at positions [1][2] in each matrix. So take the rule _NP -> ADJECTIVE NOUN_. Although _DET_ and _NOUN_ will likely have been matched to "the" and dog" and would have been included in the probability/backpointer matrix, the non-terminal _ADJECTIVE_ wouldn't match to "the" so this binary rule is a no-go. Now for the rule _NP -> DET NOUN_ we have a match, so we add an entry {"NP":0.23} to the probability matrix at [0][2] and {"NP":"DET NOUN"} to position [0][2] in the backpointer matrix. We fill up the upper right triangle of the matrix.
+
 4. The upper right corner of the matrix should have an entry with the sentence starter symbol S. This dictionary would only have one entry because it would use the highest probability rule (it adds up). If it doesn't (say your set doesn't use starter symbols) it's no issue, just 'trace' each value in the dictionary (recursively) to see which alternative has the highest probability.
+
 5. Return the parse tree with highest probability.
 
-The great thing is, this algorithm can tolerate tagging errors. Let's say once or a few times the word "the" was tagged as "ADJECTIVE". So in the backpointer matrix [0][1] you would store the original entry {"DET":"the"} but also {"ADJECTIVE":"the"}. In the probability matrix at [0][1] you'd store {"DET":q_1} and {"ADJECTIVE":q_2} where q_1 and q_2 are the probabilities of the unary rules DET -> the and ADJECTIVE -> the. Now it's very likely that q_1 > q_2 (unless you have a really badly tagged training set). When checking which binary rule that starts with NP is best, you'll probably run into NP -> DET NOUN and NP -> ADJECTIVE NOUN. These two binary rules could both be equally likely in their own right, let's say they both equal b.  
+The great thing is, this algorithm can tolerate tagging errors. Let's say once or a few times the word "the" was tagged as "ADJECTIVE". So in the backpointer matrix [0][1] you would store the original entry {"DET":"the"} but also {"ADJECTIVE":"the"}. In the probability matrix at [0][1] you'd store {"DET":q<sub>1</sub>} and {"ADJECTIVE":q<sub>2</sub>} where q<sub>1</sub> and q<sub>2</sub> are the probabilities of the unary rules _DET -> the_ and _ADJECTIVE -> the_. Now it's very likely that q<sub>1</sub> > q<sub>2</sub> (unless you have a really badly tagged training set). When checking which binary rule that starts with _NP_ is best, you'll probably run into _NP -> DET NOUN_ and _NP -> ADJECTIVE NOUN_. These two binary rules could both be equally likely in their own right, let's say they both equal b.  
 
 p(NP -> DET NOUN) == p(NP -> ADJECTIVE NOUN) == b
+
 p(NOUN -> dog) == c
+
 p(DET -> the) == q1
+
 p(ADJECTIVE -> the) == q2
 
 and q1 > q2
 
 then b * q1 * c > b * q2 * c
 
-So you will chose the correct option NP -> DET NOUN as the subtree root at [0][2].
+So you will chose the correct option _NP -> DET NOUN_ as the subtree root at [0][2].
 
 **Evaluation**
 
